@@ -3,9 +3,11 @@ import Header from '../components/Header.astro';
 import Layout from "../layouts/Layout.astro";
 import Link from "../components/Link.astro";
 import HeroSlider from "../components/HeroSlider.astro";
+import Profile from "../components/sections/ProfileSection.astro";
 import HomeNews from '../components/HomeNews.astro';
 import News from "../components/News.astro";
 import Contact from "../components/sections/ContactSection.astro";
+import Footer from "../components/Footer.astro";
 
 import styles from "../styles/theme.module.css";
 console.log("ceporan-website active"); //utk cek laman bisa jalan
@@ -31,25 +33,9 @@ console.log("========================================");
 			<main class={styles.container}>
 				<h1>{title}</h1>
 			</main>
+			<Profile />
 			<HomeNews />
 			<Contact />
-			<footer class={styles.footer}>
-      			<div class={styles.footerGrid}>
-        			<div>
-          				<h3 class={styles.footerTitle}>Tentang Kami</h3>
-          				<p>Website resmi pemerintah Desa Ceporan, Klaten.</p>
-        			</div>
-        			<div>
-          				<h3 class={styles.footerTitle}>Tautan</h3>
-          				<a href="/profile" class={styles.footerLink}>Profil Desa</a>
-						<a href="/news" class={styles.footerLink}>Berita</a>
-          				<a href="/contact" class={styles.footerLink}>Kontak</a>
-        			</div>
-      			</div>
-      			<div class={styles.copyright}>
-        			&copy; {currentYear} Desa Ceporan
-      			</div>
-				
-    		</footer>
+			<Footer />
 
 		</Layout>

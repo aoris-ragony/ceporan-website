@@ -3,24 +3,18 @@
 import { client } from  '../../lib/sanity';
 import LeafletMap from '../LeafletMap.astro';
 // 1. Ambil data profil (ambil yang pertama ditemukan / [0])
-const profile = await client.fetch(`*[_type == "profileType"][0]`);
+const rawAddress = await client.fetch(`*[_type == "addressType"][0]`);
+// Jika rawProfil itu 'null' (kosong), ganti dengan kurung kurawal kosong '{}'
+// Ini mencegah error "reading 'alamat' of null"
+const address = rawAddress || {};
 
-// 2. Siapkan data default (jaga-jaga kalau Sanity belum diisi)
-/*const data = {
-  alamat: profile?.alamat || "-",
-  email: profile?.email || "-",
-  telepon: profile?.telepon || "-",
-  whatsapp: profile?.whatsapp || "-",
-  jamKerja: profile?.jamKerja || "-"
-};
-*/
 ---
 
 <section id="kontak" class="contact-section">
   <div class="container">
     <div class="section-header">
       <h2>Hubungi Kami</h2>
-      <p>Layanan Masyarakat & Informasi {profile?.namaDesa || "Desa"}</p>
+      <p>Layanan Masyarakat & Informasi {address?.namaDesa || "Desa"}</p>
     </div>
 
     <div class="contact-grid">
@@ -28,21 +22,21 @@ const profile = await client.fetch(`*[_type == "profileType"][0]`);
         
         <div class="info-item">
           <h3>📍 Alamat Kantor</h3>
-          <p style="white-space: pre-line">{profile.alamat}</p>
+          <p style="white-space: pre-line">{address.alamat}</p>
         </div>
 
         <div class="info-item">
           <h3>🕒 Jam Operasional</h3>
-          <p style="white-space: pre-line">{profile.jamKerja}</p>
+          <p style="white-space: pre-line">{address.jamKerja}</p>
         </div>
 
         <div class="info-item">
           <h3>📞 Kontak Digital</h3>
-          <p>Email: <a href={`mailto:${profile.email}`}>{profile.email}</a></p>
-          <p>Telepon: {profile.telepon}</p>
+          <p>Email: <a href={`mailto:${address.email}`}>{address.email}</a></p>
+          <p>Telepon: {address.telepon}</p>
         </div>
         
-        <a href={`https://wa.me/${profile.whatsapp}`} class="wa-button" target="_blank">
+        <a href={`https://wa.me/${address.whatsapp}`} class="wa-button" target="_blank">
            Chat via WhatsApp →
         </a>
       </div>

@@ -1,7 +1,10 @@
 ---
 // src/components/Footer.astro
 import { client } from '../lib/sanity';
-const profile = await client.fetch(`*[_type == "profilDesa"][0]`);
+const rawAddress = await client.fetch(`*[_type == "addressType"][0]`);
+// Jika rawProfil itu 'null' (kosong), ganti dengan kurung kurawal kosong '{}'
+// Ini mencegah error "reading 'alamat' of null"
+const address = rawAddress || {};
 const currentYear = new Date().getFullYear();
 ---
 
@@ -9,7 +12,7 @@ const currentYear = new Date().getFullYear();
   <div class="footer-container">
     
     <div class="footer-info">
-      <h3 class="footer-title">{profile?.namaDesa || "Pemerintah Desa"}</h3>
+      <h3 class="footer-title">{address?.namaDesa || "Pemerintah Desa"}</h3>
       <p class="footer-desc">
         Website resmi informasi dan pelayanan publik.
       </p>
@@ -17,43 +20,43 @@ const currentYear = new Date().getFullYear();
       <div class="contact-list">
         
         {/* ALAMAT */}
-        {profile?.alamat && (
+        {address?.alamat && (
           <div class="contact-item">
             <span class="icon">📍</span>
-            <p style="white-space: pre-line">{profile.alamat}</p>
+            <p style="white-space: pre-line">{address.alamat}</p>
           </div>
         )}
 
         {/* EMAIL */}
-        {profile?.email && (
+        {address?.email && (
           <div class="contact-item">
             <span class="icon">📧</span>
             <p>
               <strong>Email:</strong><br/>
-              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+              <a href={`mailto:${address.email}`}>{address.email}</a>
             </p>
           </div>
         )}
 
         {/* TELEPON / WA (Digabung logic-nya) */}
         {/* Tampilkan ikon telepon jika Telepon ATAU WA ada datanya */}
-        {(profile?.telepon || profile?.whatsapp) && (
+        {(address?.telepon || address?.whatsapp) && (
           <div class="contact-item">
             <span class="icon">📞</span>
             <p>
               <strong>Telepon / WhatsApp:</strong><br/>
               
               {/* Cek Telepon Biasa */}
-              {profile?.telepon && (
-                 <span>{profile.telepon}</span>
+              {address?.telepon && (
+                 <span>{address.telepon}</span>
               )}
 
               {/* Pemisah jika keduanya ada */}
-              {profile?.telepon && profile?.whatsapp && <br/>}
+              {address?.telepon && address?.whatsapp && <br/>}
 
               {/* Cek Link WA */}
-              {profile?.whatsapp && (
-                <a href={`https://wa.me/${profile.whatsapp}`}>
+              {address?.whatsapp && (
+                <a href={`https://wa.me/${address.whatsapp}`}>
                   Chat WhatsApp
                 </a>
               )}

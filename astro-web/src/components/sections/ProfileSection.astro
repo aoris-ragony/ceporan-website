@@ -1,0 +1,155 @@
+---
+import { urlFor } from '../../lib/sanity';
+import { client } from '../../lib/sanity';
+
+
+// Ambil data profil
+const rawProfile = await client.fetch(`*[_type == "profileType"][0]`);
+const profile = rawProfile || {};
+---
+
+{ (profile.deskripsi || profile.perangkatDesa) && (
+  <section id="profile" class="profile-section">
+    <div class="container">
+      
+      {/* --- JUDUL SECTION --- */}
+      <div class="section-header">
+        <h2>Profil Desa</h2>
+        <div class="divider"></div>
+      </div>
+
+      {/* --- BAGIAN 1: SEJARAH & VISI MISI --- */}
+      <div class="profile-content">
+        
+        {/* Kolom Kiri: Sejarah */}
+        <div class="about-box">
+            <h3>Tentang {profile.namaDesa || "Desa"}</h3>
+            <p class="deskripsi-text">{profile.deskripsi || "Deskripsi desa belum diisi."}</p>
+        </div>
+
+        {/* Kolom Kanan: Visi Misi */}
+        <div class="visi-misi-box">
+            <div class="visi">
+                <h3>Visi</h3>
+                <p>"{profile.visi || "-"}"</p>
+            </div>
+            
+            {profile.misi && (
+                <div class="misi">
+                    <h3>Misi</h3>
+                    <ul>
+                        {profile.misi.map((item: string) => (
+                            <li>{item}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+
+      </div>
+
+      {/* --- BAGIAN 2: STRUKTUR ORGANISASI --- */}
+      {profile.perangkatDesa && (
+          <div class="struktur-organisasi">
+            <h3 class="struktur-title">Struktur Pemerintahan Desa</h3>
+            
+            <div class="team-grid">
+                {profile.perangkatDesa.map((orang: any) => (
+                    <div class="team-card">
+                        <div class="foto-wrapper">
+                            {orang.foto ? (
+                                <img 
+                                    src={urlFor(orang.foto).width(400).height(400).url()} 
+                                    alt={orang.nama} 
+                                    loading="lazy"
+                                />
+                            ) : (
+                                // Foto Placeholder jika admin lupa upload foto
+                                <div class="no-photo">👤</div>
+                            )}
+                        </div>
+                        <div class="info-wrapper">
+                            <h4>{orang.nama}</h4>
+                            <span class="jabatan">{orang.jabatan}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+          </div>
+      )}
+
+    </div>
+  </section>
+)}
+
+<style>
+  .profile-section {
+    padding: 5rem 1rem;
+    background-color: white;
+  }
+  
+  .container { max-width: 1200px; margin: 0 auto; }
+  
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-header h2 { font-size: 2.5rem; color: #111827; margin-bottom: 0.5rem; }
+  .divider { height: 4px; width: 60px; background: #1a56db; margin: 0 auto; border-radius: 2px; }
+
+  /* Layout Konten Atas */
+  .profile-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Kiri lebih lebar dari kanan */
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .about-box h3, .visi-misi-box h3 { color: #1a56db; margin-bottom: 1rem; font-size: 1.5rem; }
+  .deskripsi-text { white-space: pre-line; line-height: 1.8; color: #4b5563; text-align: justify; }
+
+  .visi-misi-box { background: #f9fafb; padding: 2rem; border-radius: 12px; border-left: 5px solid #1a56db; }
+  .visi { margin-bottom: 2rem; font-style: italic; font-weight: 500; }
+  .misi ul { padding-left: 1.2rem; }
+  .misi li { margin-bottom: 0.5rem; color: #374151; }
+
+  /* Layout Struktur Organisasi */
+  .struktur-title { text-align: center; font-size: 2rem; margin-bottom: 2.5rem; color: #1f2937; }
+  
+  .team-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .team-card {
+    background: white;
+    width: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+  }
+
+  .team-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+  .foto-wrapper {
+    width: 100%;
+    height: 250px;
+    background-color: #f3f4f6;
+    overflow: hidden;
+  }
+  
+  .foto-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+  .no-photo { font-size: 5rem; line-height: 250px; color: #9ca3af; }
+
+  .info-wrapper { padding: 1.5rem 1rem; }
+  .info-wrapper h4 { margin: 0; font-size: 1.1rem; color: #111827; margin-bottom: 0.3rem; }
+  .jabatan { font-size: 0.9rem; color: #1a56db; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Responsif HP */
+  @media (max-width: 768px) {
+    .profile-content { grid-template-columns: 1fr; }
+    .section-header h2 { font-size: 2rem; }
+  }
+</style>

@@ -21,28 +21,30 @@ console.log("Data Slider:", slides);
 ---
 
 {slides.length > 0 ? (
-  <div class={styles.sliderContainer} id="hero-slider">
-    <div class={styles.sliderTrack} id="slider-track">
-      {slides.map((slide) => (
-        <div class={styles.slide}>
-          <img 
-            src={slide.imageUrl} 
-            alt={slide.alt || "Slider Image"} 
-            class={styles.image} 
-          />
-          {/* Tampilkan caption jika ada, jika tidak ada tampilkan alt */}
-          {(slide.caption || slide.alt) && (
-            <div class={styles.captionBox}>
-              <h3>{slide.caption || slide.alt}</h3>
-              <h4>{slide.subcaption}</h4>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+  <div class={styles.sliderWrapper}>
+    <div class={styles.sliderContainer} id="hero-slider">
+      <div class={styles.sliderTrack} id="slider-track">
+        {slides.map((slide) => (
+          <div class={styles.slide}>
+            <img 
+              src={slide.imageUrl} 
+              alt={slide.alt || "Slider Image"} 
+              class={styles.image} 
+            />
+            {/* Tampilkan caption jika ada, jika tidak ada tampilkan alt */}
+            {(slide.caption || slide.alt) && (
+              <div class={styles.captionBox}>
+                <h3>{slide.caption || slide.alt}</h3>
+                <h4>{slide.subcaption}</h4>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-    <button class={`${styles.navBtn} ${styles.prevBtn}`} id="prev-btn">&#10094;</button>
-    <button class={`${styles.navBtn} ${styles.nextBtn}`} id="next-btn">&#10095;</button>
+      <button class={`${styles.navBtn} ${styles.prevBtn}`} id="prev-btn">&#10094;</button>
+      <button class={`${styles.navBtn} ${styles.nextBtn}`} id="next-btn">&#10095;</button>
+    </div>
   </div>
 ) : (
   <div style="height: 300px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">

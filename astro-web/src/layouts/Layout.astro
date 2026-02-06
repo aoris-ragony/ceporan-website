@@ -15,33 +15,45 @@ const { title } = Astro.props;
         Selamat Datang di Desa Ceporan!
     </slot>
     <script>
-        import Lenis from 'lenis'
-        // Inisialisasi Lenis
-        const lenis = new Lenis({
-            duration: 1.2, // Durasi scroll (makin besar makin lambat/halus)
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Efek pegas
-            smoothWheel: true, // Scroll mouse jadi halus
-        })
-        // Loop animasi
-        function raf(time) {
+          import Lenis from 'lenis'
+
+          // 1. Inisialisasi Lenis (Settingan "Rasa" Scroll)
+          const lenis = new Lenis({
+            duration: 1.2, // Durasi perjalanan scroll (semakin besar = semakin pelan/halus)
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Efek "Eksponensial" (Cepat di awal, ngerem di akhir)
+            smoothWheel: true, // Agar scroll mouse biasa juga halus
+          })
+      
+          // 2. Loop Animasi (Wajib agar Lenis jalan)
+          function raf(time) {
             lenis.raf(time)
             requestAnimationFrame(raf)
-        }
-        requestAnimationFrame(raf)
-        // Agar tombol "Kontak" juga ikut halus
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          }
+          requestAnimationFrame(raf)
+      
+          // 3. LOGIKA UNTUK TOMBOL HEADER (ANCHOR LINKS)
+          // Cari semua link yang mengandung tanda pagar '#'
+          document.querySelectorAll('a[href^="/#"], a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if(targetElement) {
-                    lenis.scrollTo(targetElement, {
-                        offset: -100 // Jarak stop dari header (padding)
-                    })
-                }
+            
+              // Ambil target ID (misal: "kontak" dari href="/#kontak")
+              const href = this.getAttribute('href');
+              const targetId = href.replace('/', ''); // Hapus tanda miring jika ada
+              const targetElement = document.querySelector(targetId);
+            
+              // Jika targetnya ada di halaman ini (misal: Section Kontak ditemukan)
+              if (targetElement) {
+                e.preventDefault(); // Cegah loncatan kasar bawaan browser
+
+                // Perintah Lenis untuk jalan ke sana
+                lenis.scrollTo(targetElement, {
+                  offset: -80, // PENTING: Beri jarak atas agar judul tidak ketutup Header (sesuaikan tinggi header Anda)
+                  duration: 1.5 // Durasi khusus saat klik tombol (sedikit lebih lambat biar cinematic)
+                });
+              }
+              // Jika target tidak ada (misal link ke halaman lain), biarkan browser pindah halaman seperti biasa.
             });
-        });
+          });
     </script>
 </body>
 </html>

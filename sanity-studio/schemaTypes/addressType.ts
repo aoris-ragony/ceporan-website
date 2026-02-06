@@ -1,42 +1,45 @@
-import { defineField, defineType } from 'sanity';
-export const addressType =  defineType({
-  name: 'alamat',
-  title: 'Deskripsi',
-  type: 'text',
+import { defineField, defineType } from 'sanity'
+
+export const addressType = defineType({
+  name: 'address',
+  title: 'Kontak Desa',
+  type: 'document',
   fields: [
     defineField({
-      name: 'lokasi',
-      type: 'text',
-      title: 'Alamat Balai Desa',
-      validation: (Rule) => Rule.required(),
+      name: 'namaDesa',
+      title: 'Nama Desa',
+      type: 'string',
+      initialValue: 'Desa Ceporan',
     }),
     defineField({
-      name: 'telp_1',
-      type: 'string',
-      title: 'No. Telp. Utama',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'telp_2',
-      type: 'string',
-      title: 'No. Telp. Alternatif',
+      name: 'alamat',
+      title: 'Alamat Lengkap',
+      type: 'text', // Pakai text agar bisa multi-baris
+      rows: 3,
     }),
     defineField({
       name: 'email',
+      title: 'Alamat Email',
       type: 'string',
-      title: 'Alamat Email Desa',
     }),
     defineField({
-      name: 'tanggal',
-      type: 'datetime',
-      title: 'Tanggal Posting',
-      initialValue: () => new Date().toISOString(),
+      name: 'telepon',
+      title: 'Nomor Telepon (Tampilan)',
+      description: 'Contoh: 0812-3456-7890 (Ini yang dilihat user)',
+      type: 'string',
     }),
     defineField({
-      name: 'isiBerita',
-      type: 'array',
-      title: 'Isi Berita',
-      of: [{ type: 'block' }],
+      name: 'whatsapp',
+      title: 'Nomor WhatsApp (Link)',
+      description: 'Contoh: 6281234567890 (Gunakan angka saja, dengan kkode negara 62)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'jamKerja',
+      title: 'Jam Operasional',
+      type: 'text',
+      rows: 3,
+      initialValue: 'Senin - Kamis: 08.00 - 14.00 WIB\nJumat: 08.00 - 11.00 WIB'
     }),
   ],
 })

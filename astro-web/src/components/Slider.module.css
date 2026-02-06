@@ -1,11 +1,29 @@
 /* src/components/Slider.module.css */
 
-.sliderContainer {
-  position: relative;
+/* 1. Wrapper Luar (Untuk memberi jarak dari pinggir layar) */
+.sliderWrapper {
   width: 100%;
-  height: 700px; /* Tinggi slider di laptop */
-  overflow: hidden; /* Sembunyikan foto yang antre di samping */
-  background-color: #f3f4f6;
+  max-width: 1280px; /* Batas lebar maksimal (bisa diganti 1000px, 1400px, dll) */
+  margin: 2rem auto; /* Posisi Tengah & ada jarak atas-bawah */
+  padding: 0 1rem; /* Jarak aman kiri-kanan di HP */
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 2. Container Slider (Kotak Utama) */
+.sliderContainer {
+  width: 100%;
+  
+  /* --- KUNCI UTAMA DISINI --- */
+  /* Rasio 16:9 (Standar Laptop/Video) */
+  /* Ini yang membuat dia menyusut diagonal tanpa crop */
+  aspect-ratio: 16 / 9; 
+  height: auto; /* Jangan di-set pixel mati! */
+  
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px; /* Pemanis: Sudut melengkung */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Pemanis: Bayangan */
 }
 
 .sliderTrack {
@@ -50,13 +68,14 @@
 /* Caption di atas foto */
 .captionBox {
   position: absolute;
-  /* Posisikan di tengah secara vertikal & horizontal */
-  top: 85%;
-  left: 50%;
+  bottom: 70%; /* Posisi relatif persen, bukan pixel */
+  left: 20%;
+  right: 40%;
+  color: white;
+  z-index: 10;
   transform: translate(-50%, -50%);
   /* Latar belakang hitam transparan (50% opacity) */
   background: rgba(0, 0, 0, 0);
-  color: white;
   padding: 0.5rem 1rem; /* Tambah padding agar lebih lega */
   border-radius: 5px;
   max-width: 60%;
@@ -67,22 +86,36 @@
 /* Tambahkan gaya untuk teks judul di dalam caption box */
 /* GAYA CAPTION UTAMA (H3) */
 .captionBox h3 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,1); /* Shadow agar terbaca */
-  color: #fff;
-  line-height: 1.2;
+  /* Font size responsif (sudah ada sebelumnya) */
+  font-size: clamp(1.3rem, 4vw, 3.0rem);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+
+  /* --- PERUBAHAN BARU --- */
+  line-height: 1.1;
+  /* 1. Memberi Jarak 2px dari Pinggir Kiri & Kanan */
+  padding: 0 2px; 
+
+  /* 2. Membatasi Maksimal 2 Baris */
+  white-space: normal; /* Wajib: Mengizinkan teks untuk 'wrap' (turun baris) */
+  display: -webkit-box; /* Diperlukan untuk teknik clamping modern */
+  -webkit-line-clamp: 2; /* Angka '2' adalah jumlah baris maksimal */
+  -webkit-box-orient: vertical; /* Diperlukan agar line-clamp bekerja */
+  overflow: hidden; /* Menyembunyikan teks yang melebihi 2 baris */
 }
 
 /* GAYA SUBCAPTION (H4) */
 .captionBox h4 {
-  margin: 0.3rem 0 0 0; /* Jarak sedikit dari judul atasnya */
-  font-size: 1.3rem;      /* Ukuran lebih kecil */
-  font-weight: 400;       /* Huruf biasa (tidak bold) */
-  color: #f3f4f6;         /* Putih agak abu sedikit */
-  text-shadow: 1px 1px 2px rgba(0,0,0,1);
-  font-family: var(--font-body); /* Gunakan font body agar kontras dengan judul */
+  /* UBAH BARIS INI: Gunakan 'auto' di kiri-kanan agar elemen ada di tengah */
+  margin: 0.3rem auto 0 auto; 
+  
+  font-size: clamp(1.3rem, 1.5vw, 1.2rem);
+  max-width: 80%; /* Karena ada max-width, wajib pakai margin auto agar center */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  font-weight: 400;
+  color: #f3f4f6;
+  font-family: var(--font-body);
 }
 
 
@@ -125,6 +158,9 @@
   .image {
     /* Di HP, geser fokus ke kiri (misal objek ada di kiri) */
     object-position: 20% center; 
+  }
+  .sliderContainer {
+    aspect-ratio: 4 / 3; 
   }
 
 }

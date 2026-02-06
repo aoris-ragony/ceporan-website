@@ -1,5 +1,6 @@
+
 import {newsType} from './newsType'
 import {sliderType} from './sliderType'
-import {profileType} from './profileType'
-
-export const schemaTypes = [newsType, sliderType, profileType]
+import {addressType} from './addressType'
+import { profileType } from './profileType'
+export const schemaTypes = [newsType, sliderType, addressType, profileType]
