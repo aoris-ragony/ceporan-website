@@ -6,18 +6,18 @@ import LeafletMap from '../LeafletMap.astro';
 const profile = await client.fetch(`*[_type == "profileType"][0]`);
 
 // 2. Siapkan data default (jaga-jaga kalau Sanity belum diisi)
-const data = {
+/*const data = {
   alamat: profile?.alamat || "-",
   email: profile?.email || "-",
   telepon: profile?.telepon || "-",
   whatsapp: profile?.whatsapp || "-",
   jamKerja: profile?.jamKerja || "-"
 };
+*/
 ---
 
 <section id="kontak" class="contact-section">
   <div class="container">
-    
     <div class="section-header">
       <h2>Hubungi Kami</h2>
       <p>Layanan Masyarakat & Informasi {profile?.namaDesa || "Desa"}</p>
@@ -28,21 +28,21 @@ const data = {
         
         <div class="info-item">
           <h3>📍 Alamat Kantor</h3>
-          <p style="white-space: pre-line">{data.alamat}</p>
+          <p style="white-space: pre-line">{profile.alamat}</p>
         </div>
 
         <div class="info-item">
           <h3>🕒 Jam Operasional</h3>
-          <p style="white-space: pre-line">{data.jamKerja}</p>
+          <p style="white-space: pre-line">{profile.jamKerja}</p>
         </div>
 
         <div class="info-item">
           <h3>📞 Kontak Digital</h3>
-          <p>Email: <a href={`mailto:${data.email}`}>{data.email}</a></p>
-          <p>Telepon: {data.telepon}</p>
+          <p>Email: <a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+          <p>Telepon: {profile.telepon}</p>
         </div>
         
-        <a href={`https://wa.me/${data.whatsapp}`} class="wa-button" target="_blank">
+        <a href={`https://wa.me/${profile.whatsapp}`} class="wa-button" target="_blank">
            Chat via WhatsApp →
         </a>
       </div>
