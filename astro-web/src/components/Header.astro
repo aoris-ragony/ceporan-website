@@ -1,27 +1,165 @@
 ---
 // src/components/Header.astro
-import styles from './Header.module.css';
+import { Image } from 'astro:assets';
+// Jika Anda punya logo di folder assets, import disini.
+// Jika tidak, hapus import Image dan pakai text saja.
 ---
 
-<header class={styles.header}>
-  <a href="/" class={styles.logo}>
-    <img src="../kab_klaten_1.png" alt="Logo" width="40" height="52" />
-    <span class={styles.title}>Desa Ceporan</span>
-  </a>
+<header class="site-header">
+  <div class="header-container">
+    
+    <div class="logo">
+      <a href="/">
+        <span class="logo-text">Desa Ceporan</span>
+      </a>
+    </div>
 
-  <nav class={styles.nav}>
-    <a href="/" class={styles.navLink}>Beranda</a>
-    <a href="/profil" class={styles.navLink}>Profil</a>
-    <a href="/#news" class={styles.navLink}>Berita dan Agenda</a>
-    <a href="/layanan" class={styles.navLink}>Layanan</a>
-  </nav>
+    <button id="menu-btn" class="hamburger" aria-label="Buka Menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
 
-  <div class={styles.mobileActions}>
-    <a href="/#kontak" style="background: #1a56db; color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">
-      Kontak
-    </a>
+    <nav id="nav-menu" class="nav-links">
+      <a href="/" class="nav-link">Beranda</a>
+      <a href="/#berita" class="nav-link">Berita</a>
+      <a href="/#kontak" class="nav-link">Kontak</a>
+      </nav>
+
   </div>
-  <slot>
-  
-  </slot>
 </header>
+
+<style>
+  /* --- STYLE DASAR (DESKTOP) --- */
+  .site-header {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky; /* Agar header nempel saat discroll */
+    top: 0;
+    z-index: 1000;
+    padding: 0 1rem;
+  }
+
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a56db; /* Warna Biru Desa */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .logo a { text-decoration: none; }
+
+  /* Navigasi Desktop */
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    transition: color 0.3s;
+    font-size: 1rem;
+  }
+
+  .nav-link:hover {
+    color: #1a56db;
+  }
+
+  /* Sembunyikan Hamburger di Laptop */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* --- STYLE KHUSUS HP (Max Width 768px) --- */
+  @media (max-width: 768px) {
+    
+    /* Tampilkan Tombol Hamburger */
+    .hamburger {
+      display: block;
+      z-index: 1001; /* Di atas menu */
+    }
+
+    .bar {
+      display: block;
+      width: 25px;
+      height: 3px;
+      margin: 5px auto;
+      background-color: #1a56db;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Animasi Hamburger jadi 'X' saat aktif */
+    .hamburger.active .bar:nth-child(2) { opacity: 0; }
+    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* Menu Mobile (Awalnya Sembunyi) */
+    .nav-links {
+      position: fixed;
+      left: -100%; /* Umpetin ke kiri layar */
+      top: 70px; /* Di bawah header */
+      flex-direction: column;
+      background-color: white;
+      width: 100%;
+      text-align: center;
+      transition: 0.3s;
+      gap: 0;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding-bottom: 1rem;
+    }
+
+    /* Saat Class 'active' ditambahkan lewat JS */
+    .nav-links.active {
+      left: 0; /* Munculkan ke layar */
+    }
+
+    .nav-link {
+      display: block;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #f3f4f6;
+      width: 100%;
+    }
+    
+    .nav-link:hover {
+      background-color: #f9fafb;
+    }
+  }
+</style>
+
+<script>
+  // Script untuk membuka/tutup menu di HP
+  const menuBtn = document.getElementById('menu-btn');
+  const navMenu = document.getElementById('nav-menu');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  if (menuBtn && navMenu) {
+    // 1. Saat tombol hamburger diklik
+    menuBtn.addEventListener('click', () => {
+      menuBtn.classList.toggle('active'); // Animasi ikon
+      navMenu.classList.toggle('active'); // Buka/tutup menu
+    });
+
+    // 2. Saat salah satu link diklik, tutup menu otomatis (UX Bagus)
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuBtn.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+  }
+</script>
