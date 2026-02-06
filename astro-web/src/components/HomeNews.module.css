@@ -1,0 +1,101 @@
+/* src/components/HomeNews.module.css */
+.newsSection {
+  padding: 5rem 1rem;
+  background-color: #fff;
+  /* Agar judul tidak tertutup header saat scroll */
+  scroll-margin-top: 80px; 
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 1rem;
+}
+
+.viewAllBtn {
+  color: #1a56db;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.viewAllBtn:hover {
+  text-decoration: underline;
+}
+
+.newsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.newsCard {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.newsCard:hover {
+  transform: translateY(-5px);
+}
+
+.imageWrapper {
+  height: 200px;
+  overflow: hidden;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.title a {
+  color: #111827;
+  text-decoration: none;
+}
+
+.title a:hover {
+  color: #1a56db;
+}
+
+.excerpt {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Responsif HP */
+@media (max-width: 768px) {
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

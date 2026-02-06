@@ -1,0 +1,55 @@
+---
+// src/components/HomeNews.astro
+import { client } from '../lib/sanity';
+import styles from './HomeNews.module.css'; // Kita buat CSS-nya nanti
+
+// Fetch hanya 3 berita terbaru untuk halaman depan
+const latestNews = await client.fetch(`*[_type == "news"] | order(tanggal desc)[0..2] {
+  "title": judul,
+  "slug": slug.current,
+  "date": tanggal,
+  "image": gambarUtama.asset->url,
+  "excerpt": array::join(string::split(pt::text(isiBerita), "")[0..100], "") + "..."
+}`);
+---
+
+<section id="berita" class={styles.newsSection}>
+  <div class={styles.container}>
+    
+    <div class={styles.sectionHeader}>
+      <div>
+        <h2 style="font-size: 2rem; color: #111827; margin-bottom: 0.5rem;">Berita & Agenda</h2>
+        <p style="color: #6b7280;">Kabar terbaru dari kegiatan Pemerintah Desa Ceporan</p>
+      </div>
+      <a href="/news" class={styles.viewAllBtn}>Lihat Semua Berita &rarr;</a>
+    </div>
+
+    <div class={styles.newsGrid}>
+      {latestNews.length > 0 ? (
+        latestNews.map((item) => (
+          <article class={styles.newsCard}>
+            <div class={styles.imageWrapper}>
+               <img 
+                 src={item.image || 'https://via.placeholder.com/400x250'} 
+                 alt={item.title} 
+                 loading="lazy"
+               />
+            </div>
+            <div class={styles.content}>
+              <span class={styles.date}>
+                {new Date(item.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}
+              </span>
+              <h3 class={styles.title}>
+                <a href={`/news/${item.slug}`}>{item.title}</a>
+              </h3>
+              <p class={styles.excerpt}>{item.excerpt}</p>
+            </div>
+          </article>
+        ))
+      ) : (
+        <p>Belum ada berita terbaru.</p>
+      )}
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+import '../styles/theme.module.css';
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} | Desa Ceporan</title>
+</head>
+<body>
+    <slot>
+        Selamat Datang di Desa Ceporan!
+    </slot>
+    <script>
+        import Lenis from 'lenis'
+        // Inisialisasi Lenis
+        const lenis = new Lenis({
+            duration: 1.2, // Durasi scroll (makin besar makin lambat/halus)
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Efek pegas
+            smoothWheel: true, // Scroll mouse jadi halus
+        })
+        // Loop animasi
+        function raf(time) {
+            lenis.raf(time)
+            requestAnimationFrame(raf)
+        }
+        requestAnimationFrame(raf)
+        // Agar tombol "Kontak" juga ikut halus
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if(targetElement) {
+                    lenis.scrollTo(targetElement, {
+                        offset: -100 // Jarak stop dari header (padding)
+                    })
+                }
+            });
+        });
+    </script>
+</body>
+</html>

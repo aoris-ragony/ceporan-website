@@ -1,0 +1,71 @@
+---
+// src/pages/news/[slug].astro
+import Layout from '../../layouts/Layout.astro';
+import NewsSlider from '../../components/NewsSlider.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import styles from '../../styles/theme.module.css';
+import { client } from '../../lib/sanity';
+import { PortableText } from "astro-portabletext";
+
+export async function getStaticPaths() {
+  const posts = await client.fetch(`*[_type == "news"]{ "params": { "slug": slug.current } }`);
+  return posts;
+}
+
+const { slug } = Astro.params;
+const post = await client.fetch(`*[_type == "news" && slug.current == $slug][0]{
+  title,
+  date,
+  "gambarUtama": gambarUtama.asset->url,
+  isiBerita,
+  "gallery": galeri[].asset->url
+}`, { slug });
+
+if (!post) return Astro.redirect('/404');
+
+---
+
+<Layout title={post.title}>
+  <Header />
+  <main class={styles.container}>
+    <h1>{post.title}</h1>
+    
+    <article class={styles.article}>
+
+      <h1>{post.title}</h1>
+      <p></p>
+      {post.gambarUtama && (
+        <img src={post.gambarUtama} alt={post.title} class={styles.mainImage} />
+      )}
+      <div class={styles.content}>
+        <PortableText value={post.isiBerita} />
+      </div>
+      
+      
+
+      {post.gallery && post.gallery.length > 0 && (
+        <div style="margin-top: 3rem;">
+          <h3 style="margin-bottom: 1rem; border-left: 4px solid #1a56db; padding-left: 10px;">
+            Dokumentasi Kegiatan
+          </h3>
+          <NewsSlider images={post.gallery} />
+        </div>
+      )}
+
+    </article>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .rich-text-content :global(p) {
+    margin-bottom: 1.2rem;
+    line-height: 1.8;
+  }
+  .rich-text-content :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #111827;
+  }
+</style>

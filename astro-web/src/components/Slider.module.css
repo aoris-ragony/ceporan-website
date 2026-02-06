@@ -1,0 +1,130 @@
+/* src/components/Slider.module.css */
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  height: 700px; /* Tinggi slider di laptop */
+  overflow: hidden; /* Sembunyikan foto yang antre di samping */
+  background-color: #f3f4f6;
+}
+
+.sliderTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out; /* Animasi geser halus */
+}
+
+.slide {
+  min-width: 100%; /* Agar 1 foto memenuhi 1 layar */
+  height: 100%;
+  position: relative;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Foto akan dipotong rapi memenuhi kotak */ /* Ini yang membuat foto memenuhi layar */
+  
+  /* --- SETTING NEGATIVE SPACE / FOKUS --- */
+  
+  /* OPSI 1: Standar (Fokus Tengah - REKOMENDASI) */
+  object-position: center center;
+
+  /* OPSI 2: Fokus ke Atas (Jika foto banyak memuat kepala orang) */
+  /* object-position: center top; */
+
+  /* OPSI 3: Fokus Spesifik (X Y) */
+  /* "50% 20%" artinya: Horizontal tengah, Vertikal agak ke atas sedikit */
+  /* object-position: 50% 20%; */
+}
+
+.mainImage {
+  width: 100%;       /* Lebar mengikuti layar/container */
+  height: auto;      /* Tinggi menyesuaikan agar tidak gepeng */
+  max-height: 500px; /* Batasi tinggi maksimal (agar tidak memenuhi satu layar penuh) */
+  object-fit: cover; /* Potong gambar dengan rapi jika proporsinya beda */
+  border-radius: 12px; /* Sedikit melengkung di ujung */
+  margin-bottom: 2rem; /* Beri jarak dengan judul */
+  display: block;
+}
+/* Caption di atas foto */
+.captionBox {
+  position: absolute;
+  /* Posisikan di tengah secara vertikal & horizontal */
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Latar belakang hitam transparan (50% opacity) */
+  background: rgba(0, 0, 0, 0);
+  color: white;
+  padding: 0.5rem 1rem; /* Tambah padding agar lebih lega */
+  border-radius: 5px;
+  max-width: 60%;
+  max-height: 20%;
+  text-align: center;
+}
+
+/* Tambahkan gaya untuk teks judul di dalam caption box */
+/* GAYA CAPTION UTAMA (H3) */
+.captionBox h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,1); /* Shadow agar terbaca */
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* GAYA SUBCAPTION (H4) */
+.captionBox h4 {
+  margin: 0.3rem 0 0 0; /* Jarak sedikit dari judul atasnya */
+  font-size: 1.3rem;      /* Ukuran lebih kecil */
+  font-weight: 400;       /* Huruf biasa (tidak bold) */
+  color: #f3f4f6;         /* Putih agak abu sedikit */
+  text-shadow: 1px 1px 2px rgba(0,0,0,1);
+  font-family: var(--font-body); /* Gunakan font body agar kontras dengan judul */
+}
+
+
+/* Tombol Navigasi (Panah) */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #333;
+  z-index: 10;
+}
+
+.navBtn:hover {
+  background: white;
+}
+
+.prevBtn { left: 20px; }
+.nextBtn { right: 20px; }
+
+/* Responsif HP */
+@media (max-width: 768px) {
+  .sliderContainer {
+    height: 250px; /* Lebih pendek di HP */
+  }
+  .captionBox {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    bottom: 10%;
+  }
+  .captionBox h3 { font-size: 1.2rem; }
+  .captionBox h4 { font-size: 0.9rem; }
+  /* KHUSUS HP (Layar dibawah 768px) */
+  .image {
+    /* Di HP, geser fokus ke kiri (misal objek ada di kiri) */
+    object-position: 20% center; 
+  }
+
+}

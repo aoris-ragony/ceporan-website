@@ -1,0 +1,67 @@
+---
+// src/pages/news.astro
+import Header from '../components/Header.astro';
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import styles from '../styles/theme.module.css';
+import { client } from '../lib/sanity';
+
+// PERBAIKAN: Menggunakan _type == "news" (sesuai skema Anda)
+// Dan kita ubah nama variabelnya agar mudah dipanggil di HTML (judul -> title)
+const allNews = await client.fetch(`*[_type == "news"] | order(tanggal desc) {
+  "title": judul,
+  "slug": slug.current,
+  "date": tanggal,
+  "image": gambarUtama.asset->url,
+  "excerpt": array::join(string::split(pt::text(isiBerita), "")[0..150], "") + "...",
+  
+
+}`);
+
+// Debugging: Cek di Terminal VS Code apakah data muncul
+console.log("Data Berita dari Sanity:", allNews);
+---
+
+<Layout title="Arsip Berita">
+  <Header />
+  
+  <main class={styles.container} style="padding-top: 4rem; min-height: 80vh;">
+    <header style="margin-bottom: 3rem; border-bottom: 2px solid #eee; padding-bottom: 1rem;">
+      <h1 style="font-size: 2.5rem; color: #111827;">Arsip Berita</h1>
+      <p style="color: #6b7280;">Informasi terkini Desa Ceporan</p>
+    </header>
+
+    <div class={styles.newsGrid}>
+      {allNews.length > 0 ? (
+        allNews.map((item) => (
+          <article class={styles.newsCard}>
+            {/* Cek apakah ada gambar, jika tidak pakai placeholder */}
+            <img 
+              src={item.image || 'https://via.placeholder.com/400x200?text=No+Image'} 
+              alt={item.title} 
+              class={styles.newsImage} 
+            />
+            <div class={styles.newsContent}>
+              <span class={styles.newsDate}>
+                {new Date(item.date).toLocaleDateString('id-ID', {
+                  day: 'numeric', month: 'long', year: 'numeric'
+                })}
+              </span>
+              <h3 class={styles.newsTitle}>{item.title}</h3>
+              <p class={styles.newsExcerpt}>{item.excerpt}</p>
+              {/* Link ke detail berita */}
+              <a href={`/news/${item.slug}`} class={styles.readMore}>Baca Selengkapnya &rarr;</a>
+            </div>
+          </article>
+        ))
+      ) : (
+        <div style="text-align: center; grid-column: 1/-1; padding: 2rem;">
+          <p>Belum ada berita yang diterbitkan.</p>
+          <small>Pastikan Anda sudah membuat dokumen tipe "news" di Sanity dan statusnya "Published" (Hijau).</small>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

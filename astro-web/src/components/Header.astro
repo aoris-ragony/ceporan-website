@@ -1,0 +1,27 @@
+---
+// src/components/Header.astro
+import styles from './Header.module.css';
+---
+
+<header class={styles.header}>
+  <a href="/" class={styles.logo}>
+    <img src="../kab_klaten_1.png" alt="Logo" width="40" height="52" />
+    <span class={styles.title}>Desa Ceporan</span>
+  </a>
+
+  <nav class={styles.nav}>
+    <a href="/" class={styles.navLink}>Beranda</a>
+    <a href="/profil" class={styles.navLink}>Profil</a>
+    <a href="/#news" class={styles.navLink}>Berita dan Agenda</a>
+    <a href="/layanan" class={styles.navLink}>Layanan</a>
+  </nav>
+
+  <div class={styles.mobileActions}>
+    <a href="/#kontak" style="background: #1a56db; color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">
+      Kontak
+    </a>
+  </div>
+  <slot>
+  
+  </slot>
+</header>

@@ -1,0 +1,96 @@
+---
+// src/components/HeroSlider.astro
+import { client } from '../lib/sanity';
+import styles from './Slider.module.css'; // Pastikan file CSS ini ada
+
+// PERBAIKAN: Mengambil data Array Gallery
+// Mengambil 'asset->url' dari item apapun yang ada di dalam gallery
+// Kita paksa ambil yang paling baru di-update agar data lama tidak nyangkut
+const sliderData = await client.fetch(`*[_type == "slider"] | order(_updatedAt desc)[0] {
+  gallery[] {
+    "imageUrl": asset->url, 
+    caption,
+    alt,
+    subcaption
+  }
+}`);
+
+// Pastikan slides adalah array, jika null ganti jadi array kosong
+const slides = sliderData?.gallery || [];
+console.log("Data Slider:", slides);
+---
+<div style="background: #ffffcc; border: 1px solid #e6e600; padding: 10px; font-size: 12px; margin-bottom: 10px;">
+  <strong>STATUS DEBUG:</strong>
+  {slides.length > 0 ? (
+    <span style="color: green;">✅ Ditemukan {slides.length} foto. URL foto pertama: {slides[0].imageUrl.slice(0, 30)}...</span>
+  ) : (
+    <span style="color: red;">❌ Data masih kosong. Cek 'useCdn' di sanity.js</span>
+  )}
+</div>
+{slides.length > 0 ? (
+  <div class={styles.sliderContainer} id="hero-slider">
+    <div class={styles.sliderTrack} id="slider-track">
+      {slides.map((slide) => (
+        <div class={styles.slide}>
+          <img 
+            src={slide.imageUrl} 
+            alt={slide.alt || "Slider Image"} 
+            class={styles.image} 
+          />
+          {/* Tampilkan caption jika ada, jika tidak ada tampilkan alt */}
+          {(slide.caption || slide.alt) && (
+            <div class={styles.captionBox}>
+              <h3>{slide.caption || slide.alt}</h3>
+              <h4>{slide.subcaption}</h4>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <button class={`${styles.navBtn} ${styles.prevBtn}`} id="prev-btn">&#10094;</button>
+    <button class={`${styles.navBtn} ${styles.nextBtn}`} id="next-btn">&#10095;</button>
+  </div>
+) : (
+  <div style="height: 300px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+    <p>Slider belum siap (Data kosong)</p>
+  </div>
+)}
+
+<script>
+  // Script slider sederhana
+  const track = document.getElementById('slider-track');
+  if (track && track.children.length > 0) {
+    const slides = track.children;
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let currentIndex = 0;
+
+    function updateSlidePosition() {
+      const slideWidth = slides[0].getBoundingClientRect().width;
+      track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    }
+
+    if(nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex === slides.length - 1) ? 0 : currentIndex + 1;
+        updateSlidePosition();
+      });
+    }
+
+    if(prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex === 0) ? slides.length - 1 : currentIndex - 1;
+        updateSlidePosition();
+      });
+    }
+    
+    // Auto slide
+    setInterval(() => {
+       currentIndex = (currentIndex === slides.length - 1) ? 0 : currentIndex + 1;
+       updateSlidePosition();
+    }, 5000);
+
+    window.addEventListener('resize', updateSlidePosition);
+  }
+</script>

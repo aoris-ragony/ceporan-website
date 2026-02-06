@@ -1,0 +1,60 @@
+/* src/styles/global.css */
+:root {
+  --primary-color: #0056b3;
+  --text-dark: #333;
+  --bg-light: #f4f7f6;
+  /* Font Standar (untuk paragraf/isi) */
+  --font-body: 'Inter', sans-serif;
+  /* Font Judul (untuk h1, h2, navbar) */
+  --font-heading: 'Montserrat', sans-serif;
+
+  /* Font Aksen (untuk kutipan/tanda tangan) */
+  --font-accent: 'Playfair Display', serif;
+  
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+
+}
+
+text {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    word-spacing: 2px;
+    color: #040404;
+    font-weight: 400;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: capitalize;
+}
+.link {
+    padding: 20px;
+    outline-color: #f4f7f6;
+    color: #000000;
+}
+/* src/styles/global.css */
+
+/* 1. Import Font dari Google */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700; /* Bold */
+  letter-spacing: -0.5px; /* Sedikit dirapatkan agar modern */
+}
