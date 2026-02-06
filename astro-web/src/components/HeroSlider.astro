@@ -19,14 +19,7 @@ const sliderData = await client.fetch(`*[_type == "slider"] | order(_updatedAt d
 const slides = sliderData?.gallery || [];
 console.log("Data Slider:", slides);
 ---
-<div style="background: #ffffcc; border: 1px solid #e6e600; padding: 10px; font-size: 12px; margin-bottom: 10px;">
-  <strong>STATUS DEBUG:</strong>
-  {slides.length > 0 ? (
-    <span style="color: green;">✅ Ditemukan {slides.length} foto. URL foto pertama: {slides[0].imageUrl.slice(0, 30)}...</span>
-  ) : (
-    <span style="color: red;">❌ Data masih kosong. Cek 'useCdn' di sanity.js</span>
-  )}
-</div>
+
 {slides.length > 0 ? (
   <div class={styles.sliderContainer} id="hero-slider">
     <div class={styles.sliderTrack} id="slider-track">
