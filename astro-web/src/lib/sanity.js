@@ -6,3 +6,10 @@ export const client = createClient({
   apiVersion: "2026-02-04",
   useCdn: false,
 });
+
+export const urlFor = createClient({
+  projectId: "3ozr75gb", // Ambil dari .env
+  dataset: "production",
+  apiVersion: "2026-02-04",
+  useCdn: false,
+});

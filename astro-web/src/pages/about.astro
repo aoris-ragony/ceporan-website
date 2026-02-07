@@ -1,9 +1,47 @@
 ---
-const title = "About Page";
+const title = "About The Website";
 
 import Header from '../components/Header.astro';
 import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+
+import Link from "../components/Link.astro";
+import Contact from "../components/sections/ContactSection.astro";
+
+
+import styles from "../styles/theme.module.css";
+console.log("ceporan-website active"); //utk cek laman bisa jalan
+
+const currentYear = new Date();
+const title = "Home";
+
+import { client } from '../lib/sanity'; // Import client
+
+// TES KONEKSI SEDERHANA
+const testData = await client.fetch(`count(*[_type == "news"])`);
+console.log("========================================");
+console.log("TES KONEKSI SANITY DARI HALAMAN DEPAN:");
+console.log("Jumlah Berita ditemukan:", testData);
+console.log("========================================");
 ---
+
+// ... sisa kode Anda ...
+---		
+		<Layout title = {title} align:center>
+			<Header />
+			
+			<HeroSlider />
+			<main class={styles.container}>
+				<span>
+					<Profile />
+				</span>
+			</main>
+			
+			<HomeNews />
+			<Contact />
+			<Footer />
+
+		</Layout>
 
 <Layout title = {title}>
     <Header />

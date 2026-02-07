@@ -5,7 +5,6 @@ import Link from "../components/Link.astro";
 import HeroSlider from "../components/HeroSlider.astro";
 import Profile from "../components/sections/ProfileSection.astro";
 import HomeNews from '../components/HomeNews.astro';
-import News from "../components/News.astro";
 import Contact from "../components/sections/ContactSection.astro";
 import Footer from "../components/Footer.astro";
 
@@ -31,9 +30,11 @@ console.log("========================================");
 			
 			<HeroSlider />
 			<main class={styles.container}>
-				<h1>{title}</h1>
+				<span>
+					<Profile />
+				</span>
 			</main>
-			<Profile />
+			
 			<HomeNews />
 			<Contact />
 			<Footer />

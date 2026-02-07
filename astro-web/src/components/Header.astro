@@ -1,6 +1,7 @@
 ---
 // src/components/Header.astro
 import { Image } from 'astro:assets';
+import logoKlaten from '../kab_klaten_1.png'
 // Jika Anda punya logo di folder assets, import disini.
 // Jika tidak, hapus import Image dan pakai text saja.
 ---
@@ -10,6 +11,7 @@ import { Image } from 'astro:assets';
     
     <div class="logo">
       <a href="/">
+        
         <span class="logo-text">Desa Ceporan</span>
       </a>
     </div>
@@ -22,6 +24,7 @@ import { Image } from 'astro:assets';
 
     <nav id="nav-menu" class="nav-links">
       <a href="/" class="nav-link">Beranda</a>
+      <a href="/#profile" class="nav-link">Profil</a>
       <a href="/#berita" class="nav-link">Berita</a>
       <a href="/#kontak" class="nav-link">Kontak</a>
       </nav>

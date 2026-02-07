@@ -1,15 +1,25 @@
 ---
-import { urlFor } from '../../lib/sanity';
+// src/components/ProfileSection.astro
+import { urlFor } from '../../lib/sanity'; // Pastikan path import benar (../lib atau ../../lib tergantung folder)
 import { client } from '../../lib/sanity';
 
-
-// Ambil data profil
+// 1. PERBAIKAN: Gunakan nama schema yang BENAR yaitu "profilDesa"
+// (Sesuai dengan file schemaTypes/profilDesa.ts yang kita buat)
 const rawProfile = await client.fetch(`*[_type == "profileType"][0]`);
+
+// 2. Cegah error jika data kosong
 const profile = rawProfile || {};
+
+// 3. Debugging (Cek Terminal VS Code Anda saat refresh page)
+// Jika muncul "null", berarti data belum diisi/publish di Sanity
+console.log("Data Profil Desa:", profile);
+
+
 ---
 
+{/* Logic: Hanya tampilkan jika Deskripsi ATAU Perangkat Desa ada isinya */}
 { (profile.deskripsi || profile.perangkatDesa) && (
-  <section id="profile" class="profile-section">
+  <section id="profil" class="profile-section">
     <div class="container">
       
       {/* --- JUDUL SECTION --- */}
@@ -38,6 +48,7 @@ const profile = rawProfile || {};
                 <div class="misi">
                     <h3>Misi</h3>
                     <ul>
+                        {/* Pastikan misi berupa array string */}
                         {profile.misi.map((item: string) => (
                             <li>{item}</li>
                         ))}
@@ -64,7 +75,6 @@ const profile = rawProfile || {};
                                     loading="lazy"
                                 />
                             ) : (
-                                // Foto Placeholder jika admin lupa upload foto
                                 <div class="no-photo">👤</div>
                             )}
                         </div>

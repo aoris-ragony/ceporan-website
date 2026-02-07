@@ -14,58 +14,179 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
+
+// 1. UPDATE QUERY: Saya tambahkan 'author' (jika ada di schema) atau kita pakai default nanti
 const post = await client.fetch(`*[_type == "news" && slug.current == $slug][0]{
   title,
   date,
   "gambarUtama": gambarUtama.asset->url,
   isiBerita,
-  "gallery": galeri[].asset->url
+  "gallery": galeri[].asset->url,
+  "penulis": author->name 
 }`, { slug });
+// Catatan: Jika field 'author' belum dibuat di Sanity, kode "penulis" akan null (tidak error).
 
 if (!post) return Astro.redirect('/404');
+// 2. FORMAT TANGGAL: Agar tampil "7 Februari 2026"
+const formattedDate = new Date(post.date).toLocaleDateString('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
+// Catatan: Jika field 'author' belum dibuat di Sanity, kode "penulis" akan null (tidak error).
 
 ---
 
 <Layout title={post.title}>
   <Header />
-  <main class={styles.container}>
-    <h1>{post.title}</h1>
-    
-    <article class={styles.article}>
+  
+  <main class="news-container">
+    <article class="news-article">
+      
+      {/* HEADER ARTIKEL: Judul, Tanggal, Penulis */}
+      <header class="article-header">
+        <span class="badge">
+          Berita Desa
+        </span>
+        <h1>{post.title}</h1>
+        
+        <div class="meta-data">
+          <span class="date">📅 {formattedDate}</span>
+          <span class="separator">•</span>
+          <span class="author">✍️ {post.penulis || "Tim Redaksi Desa"}</span>
+        </div>
+      </header>
 
-      <h1>{post.title}</h1>
-      <p></p>
-      {post.gambarUtama && (
-        <img src={post.gambarUtama} alt={post.title} class={styles.mainImage} />
+      {/* GAMBAR UTAMA */}
+      {post.gambarUtama ? (
+        <div class="featured-image">
+          <img src={post.gambarUtama} alt={post.title} />
+        </div>
+      ) : (
+        // Placeholder jika tidak ada gambar (Opsional)
+        <div class="featured-image placeholder">
+           <span>Tidak ada gambar utama</span>
+        </div>
       )}
-      <div class={styles.content}>
+
+      {/* ISI BERITA */}
+      <div class="article-content">
         <PortableText value={post.isiBerita} />
       </div>
-      
-      
 
+      {/* GALERI KEGIATAN */}
       {post.gallery && post.gallery.length > 0 && (
-        <div style="margin-top: 3rem;">
-          <h3 style="margin-bottom: 1rem; border-left: 4px solid #1a56db; padding-left: 10px;">
-            Dokumentasi Kegiatan
-          </h3>
+        <div class="gallery-section">
+          <h3>📸 Dokumentasi Kegiatan</h3>
           <NewsSlider images={post.gallery} />
         </div>
       )}
 
     </article>
   </main>
+
   <Footer />
 </Layout>
 
 <style>
-  .rich-text-content :global(p) {
-    margin-bottom: 1.2rem;
-    line-height: 1.8;
+  /* 1. CONTAINER UTAMA: Memberi jarak agar tidak ketutup Header */
+  .news-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 1.5rem 4rem; /* Padding atas 100px kuncinya! */
+    min-height: 60vh;
   }
-  .rich-text-content :global(h2) {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+
+  /* 2. HEADER ARTIKEL */
+  .article-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .badge {
+    background-color: #e0e7ff;
+    color: #1a56db;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem); /* Responsif */
     color: #111827;
+    margin: 1rem 0;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .meta-data {
+    color: #6b7280;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  /* 3. GAMBAR UTAMA */
+  .featured-image {
+    width: 100%;
+    max-height: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  }
+
+  .featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .featured-image.placeholder {
+    background: #f3f4f6;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+  }
+
+  /* 4. ISI KONTEN (Rich Text) */
+  .article-content {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 4rem;
+  }
+
+  /* Styling khusus untuk elemen dari PortableText */
+  .article-content :global(p) { margin-bottom: 1.5rem; text-align: justify; }
+  .article-content :global(h2) { margin-top: 2.5rem; font-size: 1.8rem; color: #111827; font-weight: 700; }
+  .article-content :global(h3) { margin-top: 2rem; font-size: 1.5rem; color: #1f2937; }
+  .article-content :global(ul) { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+  .article-content :global(li) { margin-bottom: 0.5rem; }
+  .article-content :global(strong) { color: #111827; }
+
+  /* 5. GALERI */
+  .gallery-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 3rem;
+  }
+  
+  .gallery-section h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: #111827;
+  }
+
+  /* Responsif HP */
+  @media (max-width: 768px) {
+    .news-container { padding-top: 90px; } /* Sesuaikan tinggi header HP */
+    h1 { font-size: 1.8rem; }
   }
 </style>

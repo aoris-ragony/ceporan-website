@@ -4,8 +4,6 @@ import { client } from  '../../lib/sanity';
 import LeafletMap from '../LeafletMap.astro';
 // 1. Ambil data profil (ambil yang pertama ditemukan / [0])
 const rawAddress = await client.fetch(`*[_type == "addressType"][0]`);
-// Jika rawProfil itu 'null' (kosong), ganti dengan kurung kurawal kosong '{}'
-// Ini mencegah error "reading 'alamat' of null"
 const address = rawAddress || {};
 
 ---

@@ -31,7 +31,7 @@ export const addressType = defineType({
     defineField({
       name: 'whatsapp',
       title: 'Nomor WhatsApp (Link)',
-      description: 'Contoh: 6281234567890 (Gunakan angka saja, dengan kkode negara 62)',
+      description: 'Contoh: 6281234567890 (Gunakan angka saja, dengan kode negara 62)',
       type: 'string',
     }),
     defineField({

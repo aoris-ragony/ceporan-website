@@ -20,6 +20,7 @@ export const newsType =  defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    
     defineField({
       name: 'gambarUtama',
       type: 'image',
