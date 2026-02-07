@@ -13,7 +13,6 @@ import styles from "../styles/theme.module.css";
 console.log("ceporan-website active"); //utk cek laman bisa jalan
 
 const currentYear = new Date();
-const title = "Home";
 
 import { client } from '../lib/sanity'; // Import client
 
@@ -30,7 +29,6 @@ console.log("========================================");
 		<Layout title = {title} align:center>
 			<Header />
 			
-			<HeroSlider />
 			<main class={styles.container}>
 				<span>
 					<Profile />

@@ -3,9 +3,7 @@
 import { urlFor } from '../../lib/sanity'; // Pastikan path import benar (../lib atau ../../lib tergantung folder)
 import { client } from '../../lib/sanity';
 
-// 1. PERBAIKAN: Gunakan nama schema yang BENAR yaitu "profilDesa"
-// (Sesuai dengan file schemaTypes/profilDesa.ts yang kita buat)
-const rawProfile = await client.fetch(`*[_type == "profileType"][0]`);
+const rawProfile = await client.fetch(`*[_type == "profile"][0]`);
 
 // 2. Cegah error jika data kosong
 const profile = rawProfile || {};
@@ -19,12 +17,12 @@ console.log("Data Profil Desa:", profile);
 
 {/* Logic: Hanya tampilkan jika Deskripsi ATAU Perangkat Desa ada isinya */}
 { (profile.deskripsi || profile.perangkatDesa) && (
-  <section id="profil" class="profile-section">
+  <section id="profile" class="profile-section">
     <div class="container">
       
       {/* --- JUDUL SECTION --- */}
       <div class="section-header">
-        <h2>Profil Desa</h2>
+        <h2>Profil</h2>
         <div class="divider"></div>
       </div>
 
