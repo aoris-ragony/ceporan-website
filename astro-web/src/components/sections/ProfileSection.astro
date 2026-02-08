@@ -1,163 +1,219 @@
 ---
-// src/components/ProfileSection.astro
-import { urlFor } from '../../lib/sanity'; // Pastikan path import benar (../lib atau ../../lib tergantung folder)
+// src/components/sections/ProfileSection.astro
 import { client } from '../../lib/sanity';
+import { PortableText } from "astro-portabletext";
 
-const rawProfile = await client.fetch(`*[_type == "profile"][0]`);
-
-// 2. Cegah error jika data kosong
+// Ambil data profil desa
+const rawProfile = await client.fetch(`*[_type == "profilDesa"][0]`);
 const profile = rawProfile || {};
 
-// 3. Debugging (Cek Terminal VS Code Anda saat refresh page)
-// Jika muncul "null", berarti data belum diisi/publish di Sanity
-console.log("Data Profil Desa:", profile);
-
-
+// Fallback data jika kosong
+const visi = profile.visi || "Visi belum diisi di Sanity.";
+const misi = profile.misi || []; // Misi biasanya array di Sanity
+const tentang = profile.tentangDesa || "Deskripsi desa belum diisi.";
 ---
 
-{/* Logic: Hanya tampilkan jika Deskripsi ATAU Perangkat Desa ada isinya */}
-{ (profile.deskripsi || profile.perangkatDesa) && (
-  <section id="profile" class="profile-section">
+<section id="profil" class="profile-section">
+  
+  <div class="top-content">
+    <div class="container">
+      <div class="section-header">
+        <h2>Profil Desa</h2>
+        <div class="underline"></div>
+      </div>
+
+      <div class="about-wrapper">
+        <h3>Tentang Desa</h3>
+        <div class="about-text">
+          {typeof tentang === 'string' ? <p>{tentang}</p> : <PortableText value={tentang} />}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wave-separator">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 60L48 65C96 70 192 80 288 83.3C384 86.7 480 83.3 576 73.3C672 63.3 768 46.7 864 41.7C960 36.7 1056 43.3 1152 53.3C1248 63.3 1344 76.7 1392 83.3L1440 90V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0V60Z" fill="#eff6ff"></path>
+    </svg>
+  </div>
+
+  <div class="bottom-content">
     <div class="container">
       
-      {/* --- JUDUL SECTION --- */}
-      <div class="section-header">
-        <h2>Profil</h2>
-        <div class="divider"></div>
-      </div>
-
-      {/* --- BAGIAN 1: SEJARAH & VISI MISI --- */}
-      <div class="profile-content">
-        
-        {/* Kolom Kiri: Sejarah */}
-        <div class="about-box">
-            <h3>Tentang {profile.namaDesa || "Desa"}</h3>
-            <p class="deskripsi-text">{profile.deskripsi || "Deskripsi desa belum diisi."}</p>
+      <div class="vm-grid">
+        <div class="vm-card visi-card">
+          <div class="icon-box"></div>
+          <h3>Visi</h3>
+          <p class="visi-text">"{visi}"</p>
         </div>
 
-        {/* Kolom Kanan: Visi Misi */}
-        <div class="visi-misi-box">
-            <div class="visi">
-                <h3>Visi</h3>
-                <p>"{profile.visi || "-"}"</p>
-            </div>
-            
-            {profile.misi && (
-                <div class="misi">
-                    <h3>Misi</h3>
-                    <ul>
-                        {/* Pastikan misi berupa array string */}
-                        {profile.misi.map((item: string) => (
-                            <li>{item}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
-
-      </div>
-
-      {/* --- BAGIAN 2: STRUKTUR ORGANISASI --- */}
-      {profile.perangkatDesa && (
-          <div class="struktur-organisasi">
-            <h3 class="struktur-title">Struktur Pemerintahan Desa</h3>
-            
-            <div class="team-grid">
-                {profile.perangkatDesa.map((orang: any) => (
-                    <div class="team-card">
-                        <div class="foto-wrapper">
-                            {orang.foto ? (
-                                <img 
-                                    src={urlFor(orang.foto).width(400).height(400).url()} 
-                                    alt={orang.nama} 
-                                    loading="lazy"
-                                />
-                            ) : (
-                                <div class="no-photo">👤</div>
-                            )}
-                        </div>
-                        <div class="info-wrapper">
-                            <h4>{orang.nama}</h4>
-                            <span class="jabatan">{orang.jabatan}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
+        <div class="vm-card misi-card">
+          <div class="icon-box"></div>
+          <h3>Misi</h3>
+          <div class="misi-list">
+             {Array.isArray(misi) ? (
+                <ul>
+                  {misi.map((item: any) => (
+                    <li>{item.children ? item.children[0].text : item}</li>
+                  ))}
+                </ul>
+             ) : (
+                <PortableText value={misi} />
+             )}
           </div>
-      )}
+        </div>
+      </div>
 
     </div>
-  </section>
-)}
+  </div>
+
+</section>
 
 <style>
+  /* --- LAYOUT UMUM --- */
   .profile-section {
-    padding: 5rem 1rem;
-    background-color: white;
-  }
-  
-  .container { max-width: 1200px; margin: 0 auto; }
-  
-  .section-header { text-align: center; margin-bottom: 3rem; }
-  .section-header h2 { font-size: 2.5rem; color: #111827; margin-bottom: 0.5rem; }
-  .divider { height: 4px; width: 60px; background: #1a56db; margin: 0 auto; border-radius: 2px; }
-
-  /* Layout Konten Atas */
-  .profile-content {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr; /* Kiri lebih lebar dari kanan */
-    gap: 3rem;
-    margin-bottom: 4rem;
+    position: relative;
+    /* Tidak ada padding global, kita atur per bagian */
   }
 
-  .about-box h3, .visi-misi-box h3 { color: #1a56db; margin-bottom: 1rem; font-size: 1.5rem; }
-  .deskripsi-text { white-space: pre-line; line-height: 1.8; color: #4b5563; text-align: justify; }
-
-  .visi-misi-box { background: #f9fafb; padding: 2rem; border-radius: 12px; border-left: 5px solid #1a56db; }
-  .visi { margin-bottom: 2rem; font-style: italic; font-weight: 500; }
-  .misi ul { padding-left: 1.2rem; }
-  .misi li { margin-bottom: 0.5rem; color: #374151; }
-
-  /* Layout Struktur Organisasi */
-  .struktur-title { text-align: center; font-size: 2rem; margin-bottom: 2.5rem; color: #1f2937; }
-  
-  .team-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
+  .container {
+    max-width: 1000px; /* Lebar konten agar enak dibaca */
+    margin: 0 auto;
+    padding: 0 1.5rem;
   }
 
-  .team-card {
-    background: white;
-    width: 250px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+  .section-header {
     text-align: center;
-    border: 1px solid #e5e7eb;
+    margin-bottom: 3rem;
   }
 
-  .team-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+  .section-header h2 {
+    font-size: 2.5rem;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+  }
 
-  .foto-wrapper {
+  .underline {
+    width: 60px;
+    height: 4px;
+    background-color: #1a56db; /* Biru utama */
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  /* --- BAGIAN ATAS (TENTANG) --- */
+  .top-content {
+    background-color: #ffffff;
+    padding: 6rem 0 2rem 0; /* Padding atas besar */
+    text-align: center;
+  }
+
+  .about-wrapper h3 {
+    font-size: 1.8rem;
+    color: #1a56db;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4b5563;
+    max-width: 800px;
+    margin: 0 auto; /* Tengah horizontal */
+  }
+
+  /* --- SEPARATOR WAVE (LENGKUNGAN) --- */
+  .wave-separator {
+    line-height: 0; /* Menghilangkan gap misterius */
     width: 100%;
-    height: 250px;
-    background-color: #f3f4f6;
     overflow: hidden;
   }
   
-  .foto-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-  .no-photo { font-size: 5rem; line-height: 250px; color: #9ca3af; }
+  .wave-separator svg {
+    display: block;
+    width: 100%;
+    height: 60px; /* Tinggi lengkungan */
+    fill: #eff6ff; /* Warna ini HARUS SAMA dengan background bottom-content */
+  }
 
-  .info-wrapper { padding: 1.5rem 1rem; }
-  .info-wrapper h4 { margin: 0; font-size: 1.1rem; color: #111827; margin-bottom: 0.3rem; }
-  .jabatan { font-size: 0.9rem; color: #1a56db; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  /* --- BAGIAN BAWAH (VISI MISI) --- */
+  .bottom-content {
+    background-color: #eff6ff; /* Biru sangat muda (senada dengan tema) */
+    padding: 2rem 0 6rem 0;
+  }
 
-  /* Responsif HP */
+  .vm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Kiri Visi, Kanan Misi */
+    gap: 3rem;
+    margin-top: 1rem;
+  }
+
+  .vm-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Shadow halus */
+    transition: transform 0.3s ease;
+    text-align: center; /* Default tengah */
+  }
+
+  .vm-card:hover {
+    transform: translateY(-5px); /* Efek naik saat hover */
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  }
+
+  .misi-card {
+    /* Misi rata kiri agar list rapi */
+  }
+  .misi-list {
+    text-align: left; /* HANYA daftar isinya yang rata kiri */
+    margin-top: 1rem;
+    display: inline-block; /* Agar blok list tetap rapi di tengah container */
+    width: 100%;
+  }
+
+  .icon-box {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  .vm-card h3 {
+    color: #111827;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+
+  .visi-text {
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .misi-list ul {
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+
+  .misi-list li {
+    margin-bottom: 0.8rem;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  /* --- RESPONSIF HP --- */
   @media (max-width: 768px) {
-    .profile-content { grid-template-columns: 1fr; }
-    .section-header h2 { font-size: 2rem; }
+    .vm-grid {
+      grid-template-columns: 1fr; /* Tumpuk visi misi di HP */
+      gap: 2rem;
+    }
+    
+    .wave-separator svg {
+      height: 30px; /* Lengkungan lebih kecil di HP */
+    }
   }
 </style>
