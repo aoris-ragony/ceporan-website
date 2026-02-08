@@ -88,7 +88,7 @@ const formattedDate = new Date(post.date).toLocaleDateString('id-ID', {
       {/* GALERI KEGIATAN */}
       {post.gallery && post.gallery.length > 0 && (
         <div class="gallery-section">
-          <h3>📸 Dokumentasi Kegiatan</h3>
+          <h3>Dokumentasi Kegiatan</h3>
           <NewsSlider images={post.gallery} />
         </div>
       )}
@@ -113,21 +113,21 @@ const formattedDate = new Date(post.date).toLocaleDateString('id-ID', {
     text-align: center;
     margin-bottom: 2.5rem;
   }
-.tags-wrapper {
+  .tags-wrapper {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
-}
+  }
 
-.badge {
+  .badge {
   display: inline-block;
   background-color: #e0e7ff; /* Warna Biru Muda */
   color: #1a56db;            /* Teks Biru Tua */
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 0.3rem 0.8rem;
   border-radius: 50px;       /* Bentuk Pill/Lonjong */
   text-transform: capitalize;
 }

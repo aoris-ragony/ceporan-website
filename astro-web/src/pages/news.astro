@@ -1,67 +1,127 @@
 ---
-// src/pages/news.astro
-import Header from '../components/Header.astro';
+// src/pages/news/index.astro
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import styles from '../styles/theme.module.css';
-import { client, urlFor } from '../lib/sanity';
+import NewsCard from '../components/NewsCard.astro'; // Path komponen kartu
+import { client } from '../lib/sanity';
 
-// PERBAIKAN: Menggunakan _type == "news" (sesuai skema Anda)
-// Dan kita ubah nama variabelnya agar mudah dipanggil di HTML (judul -> title)
-const allNews = await client.fetch(`*[_type == "news"] | order(tanggal desc) {
-  "title": judul,
+// --- QUERY DATA SEMUA BERITA ---
+// Bedanya dengan NewsSection: Disini kita tidak pakai limit [0..2]
+// Kita ambil SEMUA berita, diurutkan dari yang terbaru.
+const allNews = await client.fetch(`*[_type == "news"] | order(date desc, _createdAt desc) {
+  "title": coalesce(title, judul, name),
   "slug": slug.current,
-  "date": tanggal,
+  "date": coalesce(date, publishedAt, tanggal, _createdAt),
   "image": gambarUtama.asset->url,
-  "excerpt": array::join(string::split(pt::text(isiBerita), "")[0..150], "") + "...",
-  
-
+  // Ambil paragraf pertama untuk deskripsi singkat
+  "description": isiBerita[0].children[0].text,
+  // PENTING: Ambil data Tags/Kategori untuk ditampilkan di kartu
+  "tags": categories[]->title 
 }`);
-
-// Debugging: Cek di Terminal VS Code apakah data muncul
-console.log("Data Berita dari Sanity:", allNews);
 ---
 
-<Layout title="Arsip Berita">
+<Layout title="Berita & Kegiatan - Desa Ceporan">
   <Header />
-  
-  <main class={styles.container} style="padding-top: 4rem; min-height: 80vh;">
-    <header style="margin-bottom: 3rem; border-bottom: 2px solid #eee; padding-bottom: 1rem;">
-      <h1 style="font-size: 2.5rem; color: #111827;">Arsip Berita</h1>
-      <p style="color: #6b7280;">Informasi terkini Desa Ceporan</p>
-    </header>
 
-    <div class={styles.newsGrid}>
-      {allNews.length > 0 ? (
-        allNews.map((item) => (
-          <article class={styles.newsCard}>
-            {/* Cek apakah ada gambar, jika tidak pakai placeholder */}
-            <img 
-              src={item.image || 'https://via.placeholder.com/400x200?text=No+Image'} 
-              alt={item.title} 
-              class={styles.newsImage} 
+  <main class="news-page-container">
+    
+    {/* HEADER HALAMAN */}
+    <section class="page-header">
+      <h1>Berita & Kegiatan Desa</h1>
+      <p>Informasi terkini, pengumuman, dan dokumentasi kegiatan Desa Ceporan</p>
+      <div class="underline"></div>
+    </section>
+
+    {/* LIST BERITA (GRID) */}
+    <section class="news-grid-section">
+      <div class="news-grid">
+        
+        {/* LOGIKA LOOPING BERITA */}
+        {allNews && allNews.length > 0 ? (
+          allNews.map((news) => (
+            <NewsCard 
+              title={news.title}
+              slug={news.slug}     // Kirim Slug agar judul bisa diklik
+              date={news.date}
+              image={news.image}
+              description={news.description}
+              tags={news.tags}     // Kirim Tags agar muncul badge biru
             />
-            <div class={styles.newsContent}>
-              <span class={styles.newsDate}>
-                {new Date(item.date).toLocaleDateString('id-ID', {
-                  day: 'numeric', month: 'long', year: 'numeric'
-                })}
-              </span>
-              <h3 class={styles.newsTitle}>{item.title}</h3>
-              <p class={styles.newsExcerpt}>{item.excerpt}</p>
-              {/* Link ke detail berita */}
-              <a href={`/news/${item.slug}`} class={styles.readMore}>Baca Selengkapnya &rarr;</a>
-            </div>
-          </article>
-        ))
-      ) : (
-        <div style="text-align: center; grid-column: 1/-1; padding: 2rem;">
-          <p>Belum ada berita yang diterbitkan.</p>
-          <small>Pastikan Anda sudah membuat dokumen tipe "news" di Sanity dan statusnya "Published" (Hijau).</small>
-        </div>
-      )}
-    </div>
+          ))
+        ) : (
+          /* TAMPILAN JIKA BELUM ADA BERITA */
+          <div class="empty-state">
+            <p>Belum ada berita yang diterbitkan saat ini.</p>
+          </div>
+        )}
+
+      </div>
+    </section>
+
   </main>
 
   <Footer />
 </Layout>
+
+<style>
+  /* --- LAYOUT HALAMAN --- */
+  .news-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem; /* Padding bawah besar agar tidak nempel footer */
+    min-height: 80vh; /* Agar footer tetap di bawah meski berita sedikit */
+  }
+
+  /* --- HEADER JUDUL --- */
+  .page-header {
+    text-align: center;
+    margin: 3rem 0 4rem;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+  }
+
+  .page-header p {
+    color: #6b7280;
+    font-size: 1.1rem;
+  }
+
+  .underline {
+    width: 80px;
+    height: 4px;
+    background-color: #1a56db;
+    margin: 1.5rem auto 0;
+    border-radius: 2px;
+  }
+
+  /* --- GRID BERITA --- */
+  .news-grid {
+    display: grid;
+    /* Responsive Grid: Otomatis mengisi kolom */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+  }
+
+  /* --- KONDISI KOSONG --- */
+  .empty-state {
+    grid-column: 1 / -1; /* Melebar penuh */
+    text-align: center;
+    padding: 4rem;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    border: 2px dashed #e5e7eb;
+    color: #9ca3af;
+    font-size: 1.1rem;
+  }
+
+  /* Responsif HP */
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 2rem; }
+    .news-grid { grid-template-columns: 1fr; } /* 1 Kolom di HP */
+  }
+</style>

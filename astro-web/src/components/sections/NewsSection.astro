@@ -1,10 +1,7 @@
 ---
-// src/components/HomeNews.astro
-import { client, urlFor } from '../lib/sanity';
-import styles from './HomeNews.module.css'; // Kita buat CSS-nya nanti
-
 // src/components/sections/NewsSection.astro
-import NewsCard from './NewsCard.astro';
+import { client } from '../../lib/sanity';
+import NewsCard from '../NewsCard.astro';
 
 // --- QUERY DATA BERITA ---
 // Kita namakan variabel ini 'latestNews' agar cocok dengan looping di bawah
