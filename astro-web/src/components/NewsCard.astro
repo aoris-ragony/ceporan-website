@@ -1,0 +1,37 @@
+---
+const { title, date, image, slug, tags } = Astro.props; // Terima props tags
+---
+
+<a href={`/news/${slug}`} class="news-card">
+  <div class="card-image">
+    {/* Tampilkan Tag Pertama Saja di Kartu agar tidak penuh */}
+    {tags && tags.length > 0 && (
+       <span class="card-badge">{tags[0]}</span>
+    )}
+    <img src={image} alt={title} />
+  </div>
+  <div class="card-content">
+     {/* ... judul & tanggal ... */}
+  </div>
+</a>
+
+<style>
+  /* CSS untuk Badge yang menempel di atas gambar (Pojok Kiri Atas) */
+  .card-image {
+    position: relative; /* Wajib relative */
+  }
+
+  .card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(26, 86, 219, 0.9); /* Biru Transparan */
+    color: white;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    z-index: 10;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+</style>

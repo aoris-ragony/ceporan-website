@@ -10,6 +10,7 @@ export const newsType =  defineType({
       title: 'Judul Berita',
       validation: (Rule) => Rule.required().min(10).error('Judul terlalu pendek'),
     }),
+    
     defineField({
       name: 'slug',
       type: 'slug',
@@ -20,7 +21,17 @@ export const newsType =  defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    
+    defineField({
+    name: 'categories',
+    title: 'Kategori / Tag',
+    type: 'array', // Array agar satu berita bisa punya banyak tag
+    of: [
+      {
+        type: 'reference', // Ini kuncinya! Mengambil data dari 'category'
+        to: { type: 'category' },
+      },
+    ],
+    }),
     defineField({
       name: 'gambarUtama',
       type: 'image',
