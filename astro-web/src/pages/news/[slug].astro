@@ -17,8 +17,8 @@ const { slug } = Astro.params;
 
 // 1. UPDATE QUERY: Saya tambahkan 'author' (jika ada di schema) atau kita pakai default nanti
 const post = await client.fetch(`*[_type == "news" && slug.current == $slug][0]{
-  title,
-  date,
+  "title": coalesce(title, judul, name),
+  "date": coalesce(date, publishedAt, tanggal, _createdAt),
   "gambarUtama": gambarUtama.asset->url,
   isiBerita,
   "gallery": galeri[].asset->url,

@@ -5,7 +5,7 @@ export const newsType =  defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'judul',
+      name: 'title',
       type: 'string',
       title: 'Judul Berita',
       validation: (Rule) => Rule.required().min(10).error('Judul terlalu pendek'),

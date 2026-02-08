@@ -1,47 +1,73 @@
 ---
 // astro-web\src\components\sections\ContactSection.astro
-import { client } from  '../../lib/sanity';
+import { client,urlFor } from  '../../lib/sanity';
 import LeafletMap from '../LeafletMap.astro';
 // 1. Ambil data profil (ambil yang pertama ditemukan / [0])
-const rawAddress = await client.fetch(`*[_type == "addressType"][0]`);
-const address = rawAddress || {};
-
+const address = await client.fetch(`*[_type == "address"][0]{
+  namaDesa,
+  "alamat": coalesce(alamat, alamatLengkap, address),
+  "email": coalesce(email, emailAddress, mail),
+  "telepon": coalesce(telepon, noTelp, phone, hp),
+  "whatsapp": coalesce(whatsapp, wa, noWa),
+  "jamKerja": coalesce(jamKerja, jamOperasional, operationalHours)
+}`);
+const data = address || {};
+// Cek apakah ada kontak digital (Email ATAU Telepon)
+const hasDigitalContact = data.email || data.telepon;
 ---
 
 <section id="kontak" class="contact-section">
   <div class="container">
     <div class="section-header">
       <h2>Hubungi Kami</h2>
-      <p>Layanan Masyarakat & Informasi {address?.namaDesa || "Desa"}</p>
+      <p>Layanan Masyarakat & Informasi {data.namaDesa || "Desa Ceporan"}</p>
     </div>
 
     <div class="contact-grid">
       <div class="info-card">
         
-        <div class="info-item">
-          <h3>📍 Alamat Kantor</h3>
-          <p style="white-space: pre-line">{address.alamat}</p>
-        </div>
+        {/* 1. ALAMAT (Selalu muncul jika diisi) */}
+        {data.alamat && (
+          <div class="info-item">
+            <h3>📍 Alamat Kantor</h3>
+            <p style="white-space: pre-line">{data.alamat}</p>
+          </div>
+        )}
 
-        <div class="info-item">
-          <h3>🕒 Jam Operasional</h3>
-          <p style="white-space: pre-line">{address.jamKerja}</p>
-        </div>
+        {/* 2. JAM OPERASIONAL (Selalu muncul jika diisi) */}
+        {data.jamKerja && (
+          <div class="info-item">
+            <h3>🕒 Jam Operasional</h3>
+            <p style="white-space: pre-line">{data.jamKerja}</p>
+          </div>
+        )}
 
-        <div class="info-item">
-          <h3>📞 Kontak Digital</h3>
-          <p>Email: <a href={`mailto:${address.email}`}>{address.email}</a></p>
-          <p>Telepon: {address.telepon}</p>
-        </div>
+        {/* 3. KONTAK DIGITAL (Hanya muncul jika ada Email ATAU Telepon) */}
+        {hasDigitalContact && (
+          <div class="info-item">
+            <h3>📞 Kontak Digital</h3>
+            
+            {data.email && (
+               <p>Email: <a href={`mailto:${data.email}`}>{data.email}</a></p>
+            )}
+
+            {data.telepon && (
+               <p>Telepon: {data.telepon}</p>
+            )}
+          </div>
+        )}
         
-        <a href={`https://wa.me/${address.whatsapp}`} class="wa-button" target="_blank">
-           Chat via WhatsApp →
-        </a>
+        {/* 4. TOMBOL WHATSAPP (Terpisah, muncul jika ada WA) */}
+        {data.whatsapp && (
+            <a href={`https://wa.me/${data.whatsapp}`} class="wa-button" target="_blank">
+              Chat via WhatsApp →
+            </a>
+        )}
       </div>
 
-        <div class="map-card">
-            <LeafletMap />
-        </div>
+      <div class="map-card">
+          <LeafletMap />
+      </div>
     </div>
 
   </div>
@@ -50,34 +76,22 @@ const address = rawAddress || {};
 <style>
   .contact-section {
     padding: 5rem 1rem;
-    background-color: #f9fafb; /* Warna abu-abu sangat muda */
+    background-color: #f9fafb;
     scroll-margin-top: 100px;
   }
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+  .container { max-width: 1200px; margin: 0 auto; }
 
-  .section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  .section-header h2 {
-    font-size: 2.5rem;
-    color: #111827;
-    margin-bottom: 0.5rem;
-  }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-header h2 { font-size: 2.5rem; color: #111827; margin-bottom: 0.5rem; }
 
   .contact-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 Kolom */
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    align-items: stretch; /* Tinggi kolom sama */
+    align-items: stretch;
   }
 
-  /* Kartu Info */
   .info-card {
     background: white;
     padding: 2.5rem;
@@ -85,24 +99,18 @@ const address = rawAddress || {};
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
 
-  .info-item {
-    margin-bottom: 2rem;
-  }
+  .info-item { margin-bottom: 2rem; }
+  .info-item h3 { font-size: 1.2rem; color: #1a56db; margin-bottom: 0.5rem; }
+  .info-item p { color: #4b5563; line-height: 1.6; }
+  
+  .info-item a { color: #1a56db; text-decoration: none; }
+  .info-item a:hover { text-decoration: underline; }
 
-  .info-item h3 {
-    font-size: 1.2rem;
-    color: #1a56db; /* Biru */
-    margin-bottom: 0.5rem;
-  }
-
-  .info-item p {
-    color: #4b5563;
-    line-height: 1.6;
-  }
+  .text-muted { color: #9ca3af; font-style: italic; }
 
   .wa-button {
     display: inline-block;
-    background-color: #25D366; /* Warna WA */
+    background-color: #25D366;
     color: white;
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
@@ -111,12 +119,8 @@ const address = rawAddress || {};
     margin-top: 1rem;
     transition: background 0.3s;
   }
+  .wa-button:hover { background-color: #1ebc57; }
 
-  .wa-button:hover {
-    background-color: #1ebc57;
-  }
-
-  /* Kartu Peta */
   .map-card {
     border-radius: 12px;
     overflow: hidden;
@@ -124,13 +128,8 @@ const address = rawAddress || {};
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
 
-  /* Responsif HP */
   @media (max-width: 768px) {
-    .contact-grid {
-      grid-template-columns: 1fr; /* Jadi 1 kolom */
-    }
-    .map-card {
-      height: 300px;
-    }
+    .contact-grid { grid-template-columns: 1fr; }
+    .map-card { height: 300px; }
   }
 </style>
