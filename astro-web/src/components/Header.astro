@@ -1,18 +1,18 @@
 ---
 // src/components/Header.astro
-import { Image } from 'astro:assets';
-import logoKlaten from '../kab_klaten_1.png'
-// Jika Anda punya logo di folder assets, import disini.
-// Jika tidak, hapus import Image dan pakai text saja.
 ---
 
 <header class="site-header">
   <div class="header-container">
     
     <div class="logo">
-      <a href="/">
+      <a href="/" class="logo-link">
+        <img src="/kab_klaten_1.png" alt="Logo Klaten" width="45" height="55">
         
-        <span class="logo-text">Desa Ceporan</span>
+        <div class="title-wrapper">
+          <span class="site-title">DESA CEPORAN</span>
+          <span class="site-subtitle">Kecamatan Gantiwarno, Kabupaten Klaten</span>
+        </div>
       </a>
     </div>
 
@@ -27,7 +27,7 @@ import logoKlaten from '../kab_klaten_1.png'
       <a href="/#profile" class="nav-link">Profil</a>
       <a href="/#berita" class="nav-link">Berita</a>
       <a href="/#kontak" class="nav-link">Kontak</a>
-      </nav>
+    </nav>
 
   </div>
 </header>
@@ -36,33 +36,55 @@ import logoKlaten from '../kab_klaten_1.png'
   /* --- STYLE DASAR (DESKTOP) --- */
   .site-header {
     background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    position: sticky; /* Agar header nempel saat discroll */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08); /* Shadow sedikit lebih halus */
+    position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 0 1rem;
+    padding: 0.5rem 1rem; /* Padding atas bawah sedikit dikecilkan agar proporsional */
   }
 
   .header-container {
     max-width: 1200px;
     margin: 0 auto;
-    height: 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 70px;
   }
 
-  .logo-text {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #1a56db; /* Warna Biru Desa */
+  /* --- PERBAIKAN LOGO (FLEXBOX) --- */
+  .logo-link {
+    display: flex;          /* KUNCI: Agar Logo & Teks Sejajar Kiri-Kanan */
+    align-items: center;    /* Vertikal rata tengah */
+    gap: 12px;              /* Jarak antara Logo dan Teks */
+    text-decoration: none;
+  }
+
+  .title-wrapper {
+    display: flex;
+    flex-direction: column; /* Judul di atas, Subjudul di bawah */
+    justify-content: center;
+  }
+
+  .site-title {
+    font-family: 'Poppins', sans-serif; /* Menggunakan Font Poppins */
+    font-size: 1.4rem;
+    font-weight: 700; /* Bold */
+    color: #1a56db;
+    line-height: 1.1;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
 
-  .logo a { text-decoration: none; }
+  .site-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-weight: 400;
+    margin-top: 2px;
+  }
 
-  /* Navigasi Desktop */
+  /* --- NAVIGASI --- */
   .nav-links {
     display: flex;
     gap: 2rem;
@@ -71,93 +93,80 @@ import logoKlaten from '../kab_klaten_1.png'
   .nav-link {
     text-decoration: none;
     color: #374151;
+    font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    transition: color 0.3s;
     font-size: 1rem;
+    transition: color 0.3s;
   }
 
   .nav-link:hover {
     color: #1a56db;
   }
 
-  /* Sembunyikan Hamburger di Laptop */
+  /* Hamburger Menu */
   .hamburger {
     display: none;
     background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
   }
 
-  /* --- STYLE KHUSUS HP (Max Width 768px) --- */
+  /* --- RESPONSIF HP (Max Width 768px) --- */
   @media (max-width: 768px) {
+    .hamburger { display: block; z-index: 1001; }
     
-    /* Tampilkan Tombol Hamburger */
-    .hamburger {
-      display: block;
-      z-index: 1001; /* Di atas menu */
-    }
-
     .bar {
-      display: block;
-      width: 25px;
-      height: 3px;
-      margin: 5px auto;
-      background-color: #1a56db;
-      transition: all 0.3s ease-in-out;
+      display: block; width: 25px; height: 3px; margin: 5px auto;
+      background-color: #1a56db; transition: all 0.3s ease-in-out;
     }
 
-    /* Animasi Hamburger jadi 'X' saat aktif */
     .hamburger.active .bar:nth-child(2) { opacity: 0; }
     .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-    /* Menu Mobile (Awalnya Sembunyi) */
+    /* Menu Mobile */
     .nav-links {
       position: fixed;
-      left: -100%; /* Umpetin ke kiri layar */
-      top: 70px; /* Di bawah header */
+      left: -100%;
+      top: 0; /* Full screen menu biasanya lebih rapi dimulai dari top 0 */
+      bottom: 0;
       flex-direction: column;
       background-color: white;
-      width: 100%;
-      text-align: center;
+      width: 70%; /* Jangan full width agar user bisa klik luar untuk tutup */
+      max-width: 300px;
+      padding-top: 80px; /* Jarak dari atas */
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       transition: 0.3s;
-      gap: 0;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      padding-bottom: 1rem;
     }
 
-    /* Saat Class 'active' ditambahkan lewat JS */
-    .nav-links.active {
-      left: 0; /* Munculkan ke layar */
-    }
+    .nav-links.active { left: 0; }
 
     .nav-link {
-      display: block;
-      padding: 1.5rem 0;
+      padding: 1rem 2rem;
       border-bottom: 1px solid #f3f4f6;
       width: 100%;
+      text-align: left;
     }
-    
-    .nav-link:hover {
-      background-color: #f9fafb;
-    }
+
+    /* Penyesuaian Logo di HP agar tidak terlalu besar */
+    .site-title { font-size: 1.1rem; }
+    .site-subtitle { font-size: 0.7rem; display: none; /* Opsional: Sembunyikan subjudul di HP jika terlalu sempit */ }
+    img { width: 35px; height: auto; }
   }
 </style>
 
 <script>
-  // Script untuk membuka/tutup menu di HP
   const menuBtn = document.getElementById('menu-btn');
   const navMenu = document.getElementById('nav-menu');
   const navLinks = document.querySelectorAll('.nav-link');
 
   if (menuBtn && navMenu) {
-    // 1. Saat tombol hamburger diklik
     menuBtn.addEventListener('click', () => {
-      menuBtn.classList.toggle('active'); // Animasi ikon
-      navMenu.classList.toggle('active'); // Buka/tutup menu
+      menuBtn.classList.toggle('active');
+      navMenu.classList.toggle('active');
     });
 
-    // 2. Saat salah satu link diklik, tutup menu otomatis (UX Bagus)
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
         menuBtn.classList.remove('active');

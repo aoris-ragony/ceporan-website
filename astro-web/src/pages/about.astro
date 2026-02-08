@@ -14,7 +14,8 @@ console.log("ceporan-website active"); //utk cek laman bisa jalan
 
 const currentYear = new Date();
 
-import { client } from '../lib/sanity'; // Import client
+import { client, urlFor } from '../lib/sanity';
+// Import client
 
 // TES KONEKSI SEDERHANA
 const testData = await client.fetch(`count(*[_type == "news"])`);

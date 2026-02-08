@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import styles from '../styles/theme.module.css';
-import { client } from '../lib/sanity';
+import { client, urlFor } from '../lib/sanity';
 
 // PERBAIKAN: Menggunakan _type == "news" (sesuai skema Anda)
 // Dan kita ubah nama variabelnya agar mudah dipanggil di HTML (judul -> title)

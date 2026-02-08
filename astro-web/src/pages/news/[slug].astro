@@ -5,7 +5,7 @@ import NewsSlider from '../../components/NewsSlider.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import styles from '../../styles/theme.module.css';
-import { client } from '../../lib/sanity';
+import { client, urlFor } from '../../lib/sanity';
 import { PortableText } from "astro-portabletext";
 
 export async function getStaticPaths() {
