@@ -2,7 +2,6 @@
 // src/components/NewsSlider.astro
 const { images } = Astro.props;
 
-// Validasi: Jika images null/undefined atau kosong, stop disini.
 if (!images || !Array.isArray(images) || images.length === 0) {
   return null;
 }
@@ -14,17 +13,21 @@ if (!images || !Array.isArray(images) || images.length === 0) {
     <div class="news-slider-track" id="news-track">
       {images.map((imgUrl, index) => (
         <div class="news-slide">
-          <img src={imgUrl} alt={`Foto dokumentasi ${index + 1}`} loading="lazy" />
+          <img src={imgUrl} alt={`Dokumentasi ${index + 1}`} loading="lazy" />
         </div>
       ))}
     </div>
 
-    <button class="nav-btn prev-btn" id="news-prev" aria-label="Foto Sebelumnya">&#10094;</button>
-    <button class="nav-btn next-btn" id="news-next" aria-label="Foto Selanjutnya">&#10095;</button>
-    
-    <div class="slide-counter">
-      <span id="current-slide">1</span> / {images.length}
-    </div>
+    {/* Navigasi (Hanya muncul jika gambar lebih dari 1) */}
+    {images.length > 1 && (
+      <>
+        <button class="nav-btn prev-btn" id="news-prev" aria-label="Sebelumnya">&#10094;</button>
+        <button class="nav-btn next-btn" id="news-next" aria-label="Selanjutnya">&#10095;</button>
+        <div class="slide-counter">
+          <span id="current-slide">1</span> / {images.length}
+        </div>
+      </>
+    )}
   </div>
 
 </div>
@@ -33,49 +36,69 @@ if (!images || !Array.isArray(images) || images.length === 0) {
   .news-slider-wrapper {
     width: 100%;
     margin: 2rem 0;
-    /* Debugging: Jika background merah muncul tapi gambar tidak, berarti gambar gagal load */
-    background-color: #f3f4f6; 
-    border-radius: 12px;
+    /* Hilangkan background merah debugging, ganti abu soft */
+    background-color: transparent; 
   }
 
   .news-slider-container {
     position: relative;
     width: 100%;
-    max-width: 800px;
-    height: 400px; /* Tinggi Wajib ada */
+    max-width: 850px; /* Lebar maksimal agar tidak terlalu raksasa di monitor PC */
     margin: 0 auto;
-    overflow: hidden; /* Penting: Sembunyikan foto yang antre di samping */
+    
+    /* --- PERUBAHAN UTAMA DISINI --- */
+    /* Hapus height: 400px; */
+    /* Ganti dengan aspect-ratio agar mengunci bentuk 16:9 (standar video/foto HP landscape) */
+    aspect-ratio: 16 / 9; 
+    
+    overflow: hidden;
     border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Tambah bayangan agar cantik */
   }
 
   .news-slider-track {
-    display: flex; /* Wajib Flex agar berjejer ke samping */
+    display: flex;
     height: 100%;
-    transition: transform 0.5s ease-in-out;
     width: 100%;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* Efek geser lebih smooth */
   }
 
-  .news-slide {
-    min-width: 100%; /* Wajib 100% agar memenuhi container */
-    height: 100%;
-    flex-shrink: 0; /* Mencegah slide mengecil */
-  }
-  .news-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    
-    /* --- SETTING FOKUS --- */
-    /* Karena slider berita ukurannya 2:1 (Landscape banget), */
-    /* biasanya fokus tengah sudah paling aman */
-    object-position: center center; 
-  }
+  /* ... CSS Container di atas tetap sama ... */
+
+/* 1. KOTAK SLIDE (Background Hitam) */
+.news-slide {
+  min-width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  
+  display: flex;           /* Flexbox aktif */
+  align-items: center;     /* Gambar rata tengah vertikal */
+  justify-content: center; /* Gambar rata tengah horizontal */
+  
+  background-color: #000;  /* Wajib Hitam: Agar sisa ruang kosong terlihat elegan */
+}
+
+/* 2. GAMBAR (Anti-Crop) */
+.news-slide img {
+  width: 100%;
+  height: 100%;
+  
+  /* --- KUNCI PERUBAHAN --- */
+  /* Ganti 'cover' menjadi 'contain' */
+  /* Artinya: "Muat seluruh gambar ke dalam kotak, jangan ada yang terpotong" */
+  object-fit: contain; 
+  
+  display: block;
+}
+
+/* ... CSS Navigasi di bawah tetap sama ... */
+
   .nav-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.2); /* Tombol transparan modern */
+    backdrop-filter: blur(4px);
     color: white;
     border: none;
     width: 40px;
@@ -84,14 +107,12 @@ if (!images || !Array.isArray(images) || images.length === 0) {
     cursor: pointer;
     font-size: 1.2rem;
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: background 0.3s;
   }
   
-  .nav-btn:hover { background: rgba(0, 0, 0, 0.8); }
-  .prev-btn { left: 10px; }
-  .next-btn { right: 10px; }
+  .nav-btn:hover { background: rgba(0, 0, 0, 0.7); }
+  .prev-btn { left: 15px; }
+  .next-btn { right: 15px; }
 
   .slide-counter {
     position: absolute;
@@ -101,59 +122,64 @@ if (!images || !Array.isArray(images) || images.length === 0) {
     color: white;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.9rem;
-    z-index: 10;
+    font-size: 0.85rem;
+    font-weight: 500;
   }
 
+  /* Responsif HP */
   @media (max-width: 768px) {
-    .news-slider-container { height: 250px; }
+    /* Tidak perlu atur height lagi! */
+    /* aspect-ratio akan otomatis menghitung tinggi yang pas untuk HP */
+    .news-slider-container {
+      max-width: 100%;
+      border-radius: 8px; /* Radius lebih kecil di HP */
+    }
   }
 </style>
 
 <script>
-  // Script ini akan berjalan setiap kali komponen dimuat
-  function initSlider() {
+  function initNewsSlider() {
     const track = document.getElementById('news-track');
     const prevBtn = document.getElementById('news-prev');
     const nextBtn = document.getElementById('news-next');
     const counter = document.getElementById('current-slide');
 
-    if (!track) {
-      console.warn("Slider Track tidak ditemukan!");
-      return;
-    }
+    if (!track) return;
 
-    // Ambil jumlah slide langsung dari elemen anak
+    // Reset posisi saat init ulang (penting untuk Astro View Transitions)
+    let currentIndex = 0;
+    track.style.transform = `translateX(0)`; 
+    if(counter) counter.innerText = "1";
+
     const slides = track.children;
     const totalSlides = slides.length;
-    let currentIndex = 0;
-
-    console.log(`Slider Berita Siap: Ditemukan ${totalSlides} foto.`);
 
     function updatePosition() {
-      // Geser track berdasarkan persentase (lebih aman daripada pixel)
       track.style.transform = `translateX(-${currentIndex * 100}%)`;
       if(counter) counter.innerText = (currentIndex + 1).toString();
     }
 
+    // Pastikan event listener tidak duplikat dengan menghapusnya dulu (opsional tapi aman)
+    // Disini kita pakai 'onclick' property overwrite agar simpel dan anti-double click
+    
     if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
+      nextBtn.onclick = () => {
         currentIndex = (currentIndex === totalSlides - 1) ? 0 : currentIndex + 1;
         updatePosition();
-      });
+      };
     }
 
     if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
+      prevBtn.onclick = () => {
         currentIndex = (currentIndex === 0) ? totalSlides - 1 : currentIndex - 1;
         updatePosition();
-      });
+      };
     }
   }
 
-  // Jalankan fungsi
-  initSlider();
+  // Jalankan saat load awal
+  initNewsSlider();
   
-  // Dukungan untuk Astro View Transitions (jika nanti Anda pakai)
-  document.addEventListener('astro:page-load', initSlider);
+  // Jalankan saat navigasi antar halaman (Astro View Transitions)
+  document.addEventListener('astro:page-load', initNewsSlider);
 </script>
