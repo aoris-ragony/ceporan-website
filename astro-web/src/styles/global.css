@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+/* 1. Import Font dari Google */
 /* src/styles/global.css */
 :root {
   --primary-color: #0056b3;
@@ -53,8 +55,6 @@ text {
 }
 /* src/styles/global.css */
 
-/* 1. Import Font dari Google */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
 
 h1, h2, h3, h4, h5, h6 {
