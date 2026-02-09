@@ -3,7 +3,7 @@
   padding: 5rem 1rem;
   background-color: #fff;
   /* Agar judul tidak tertutup header saat scroll */
-  scroll-margin-top: 80px; 
+  scroll-margin-top: 50px; 
 }
 
 .container {

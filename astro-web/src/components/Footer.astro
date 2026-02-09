@@ -17,54 +17,7 @@ const currentYear = new Date().getFullYear();
         Website resmi informasi dan pelayanan publik.
       </p>
       
-      <div class="contact-list">
-        
-        {/* ALAMAT */}
-        {address?.alamat && (
-          <div class="contact-item">
-            <span class="icon">📍</span>
-            <p style="white-space: pre-line">{address.alamat}</p>
-          </div>
-        )}
-
-        {/* EMAIL */}
-        {address?.email && (
-          <div class="contact-item">
-            <span class="icon">📧</span>
-            <p>
-              <strong>Email:</strong><br/>
-              <a href={`mailto:${address.email}`}>{address.email}</a>
-            </p>
-          </div>
-        )}
-
-        {/* TELEPON / WA (Digabung logic-nya) */}
-        {/* Tampilkan ikon telepon jika Telepon ATAU WA ada datanya */}
-        {(address?.telepon || address?.whatsapp) && (
-          <div class="contact-item">
-            <span class="icon">📞</span>
-            <p>
-              <strong>Telepon / WhatsApp:</strong><br/>
-              
-              {/* Cek Telepon Biasa */}
-              {address?.telepon && (
-                 <span>{address.telepon}</span>
-              )}
-
-              {/* Pemisah jika keduanya ada */}
-              {address?.telepon && address?.whatsapp && <br/>}
-
-              {/* Cek Link WA */}
-              {address?.whatsapp && (
-                <a href={`https://wa.me/${address.whatsapp}`}>
-                  Chat WhatsApp
-                </a>
-              )}
-            </p>
-          </div>
-        )}
-
-      </div>
+    
     </div>
 
   <div class="copyright">

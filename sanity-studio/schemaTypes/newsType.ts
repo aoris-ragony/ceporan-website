@@ -22,17 +22,6 @@ export const newsType =  defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-    name: 'categories',
-    title: 'Kategori / Tag',
-    type: 'array', // Array agar satu berita bisa punya banyak tag
-    of: [
-      {
-        type: 'reference', // Ini kuncinya! Mengambil data dari 'category'
-        to: { type: 'category' },
-      },
-    ],
-    }),
-    defineField({
       name: 'gambarUtama',
       type: 'image',
       title: 'Foto Utama',
@@ -65,6 +54,19 @@ export const newsType =  defineType({
       title: 'Tanggal Posting',
       initialValue: () => new Date().toISOString(),
     }),
+
+    defineField({
+      name: 'categories',
+      title: 'Kategori / Tag',
+      type: 'array', // Array artinya bisa pilih lebih dari 1 tag
+      of: [
+        {
+          type: 'reference', // Mengambil data dari dokumen lain
+          to: { type: 'category' }, // Pastikan ini 'category' (sesuai name di categoryType.ts)
+        },
+      ],
+    }),
+
     defineField({
       name: 'penulis',
       type: 'string',

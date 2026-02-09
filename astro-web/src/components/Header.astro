@@ -1,177 +1,265 @@
 ---
 // src/components/Header.astro
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1); 
+
+
 ---
 
 <header class="site-header">
-  <div class="header-container">
+  <div class="container">
     
-    <div class="logo">
-      <a href="/" class="logo-link">
-        <img src="/kab_klaten_1.png" alt="Logo Klaten" width="45" height="55">
-        
-        <div class="title-wrapper">
-          <span class="site-title">DESA CEPORAN</span>
-          <span class="site-subtitle">Kecamatan Gantiwarno, Kabupaten Klaten</span>
-        </div>
-      </a>
-    </div>
+    {/* LOGO & NAMA DESA */}
+    <a href="/" class="brand">
+      {/* Ganti src dengan lokasi logo Anda jika ada, misal /logo.png */}
+      <img src="/kab_klaten_1.png" alt="Logo" class="logo" /> 
+      <div class="brand-text">
+        <span class="desa-name">DESA CEPORAN</span>
+        <span class="kab-name">Kecamatan Gantiwarno, Kabupaten Klaten</span>
+      </div>
+    </a>
 
-    <button id="menu-btn" class="hamburger" aria-label="Buka Menu">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </button>
-
-    <nav id="nav-menu" class="nav-links">
-      <a href="/" class="nav-link">Beranda</a>
-      <a href="/#profile" class="nav-link">Profil</a>
-      <a href="/#berita" class="nav-link">Berita</a>
-      <a href="/#kontak" class="nav-link">Kontak</a>
+    {/* MENU DESKTOP (Layar Besar) */}
+    <nav class="desktop-nav">
+      <a href="/" class={currentPath === "" ? "active" : ""}>Beranda</a>
+      
+      {/* Perbaikan Link: Pakai /#profil agar bisa scroll dari halaman lain */}
+      <a href="/#profil">Profil</a> 
+      
+      <a href="/#news" class={currentPath.startsWith("news") ? "active" : ""}>Berita</a>
+      <a href="/#contact" class={currentPath.startsWith("kontak") ? "active" : ""}>Kontak</a>
     </nav>
 
+    {/* TOMBOL MENU MOBILE (Hamburger) */}
+    <button id="mobile-menu-btn" class="hamburger" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  {/* MENU MOBILE (Slide samping/Overlay) */}
+  <div id="mobile-nav" class="mobile-nav">
+    <div class="mobile-nav-content">
+        
+        {/* Header Menu Mobile (Tombol Close) */}
+        <div class="mobile-header">
+            <span class="menu-title">Menu</span>
+            <button id="close-menu-btn" class="close-btn">&times;</button>
+        </div>
+
+        {/* Daftar Link Mobile */}
+        <div class="mobile-links">
+            <a href="/">Beranda</a>
+            <a href="/#profil">Profil</a>
+            <a href="/#news">Berita</a>
+            <a href="/#contact">Kontak</a>
+        </div>
+    </div>
   </div>
 </header>
 
+<script>
+  // Script untuk Buka/Tutup Menu Mobile
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const closeBtn = document.getElementById('close-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  const navLinks = mobileNav.querySelectorAll('a');
+
+  function toggleMenu() {
+    mobileNav.classList.toggle('active');
+  }
+
+  if(menuBtn) menuBtn.addEventListener('click', toggleMenu);
+  if(closeBtn) closeBtn.addEventListener('click', toggleMenu);
+  
+  // Tutup menu otomatis saat salah satu link diklik
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+    });
+  });
+</script>
+
 <style>
-  /* --- STYLE DASAR (DESKTOP) --- */
+  /* --- STYLE UTAMA HEADER --- */
   .site-header {
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08); /* Shadow sedikit lebih halus */
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 0.5rem 1rem; /* Padding atas bawah sedikit dikecilkan agar proporsional */
+    padding: 0.5rem 0;
   }
 
-  .header-container {
+  .container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 70px;
   }
 
-  /* --- PERBAIKAN LOGO (FLEXBOX) --- */
-  .logo-link {
-    display: flex;          /* KUNCI: Agar Logo & Teks Sejajar Kiri-Kanan */
-    align-items: center;    /* Vertikal rata tengah */
-    gap: 12px;              /* Jarak antara Logo dan Teks */
+  /* --- BRAND / LOGO --- */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
   }
-
-  .title-wrapper {
-    display: flex;
-    flex-direction: column; /* Judul di atas, Subjudul di bawah */
-    justify-content: center;
+  
+  .logo {
+    height: 45px; /* Sesuaikan ukuran logo */
+    width: auto;
   }
 
-  .site-title {
-    font-family: 'Poppins', sans-serif; /* Menggunakan Font Poppins */
-    font-size: 1.4rem;
-    font-weight: 700; /* Bold */
-    color: #1a56db;
-    line-height: 1.1;
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .desa-name {
+    font-weight: 800;
+    color: #1a56db; /* Biru Utama */
+    font-size: 1.1rem;
+    line-height: 1.2;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
   }
 
-  .site-subtitle {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.8rem;
+  .kab-name {
+    font-size: 0.7rem;
     color: #6b7280;
-    font-weight: 400;
-    margin-top: 2px;
   }
 
-  /* --- NAVIGASI --- */
-  .nav-links {
-    display: flex;
-    gap: 2rem;
+  /* --- MENU DESKTOP --- */
+  .desktop-nav {
+    display: none; /* Sembunyi di HP */
   }
 
-  .nav-link {
-    text-decoration: none;
-    color: #374151;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: color 0.3s;
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .desktop-nav a {
+      text-decoration: none;
+      color: #374151;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .desktop-nav a:hover, .desktop-nav a.active {
+      color: #1a56db;
+    }
+    
+    .hamburger {
+      display: none; /* Sembunyi Hamburger di Laptop */
+    }
   }
 
-  .nav-link:hover {
-    color: #1a56db;
-  }
-
-  /* Hamburger Menu */
+  /* --- TOMBOL HAMBURGER --- */
   .hamburger {
-    display: none;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+  }
+  
+  .hamburger span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background-color: #333;
+    border-radius: 2px;
   }
 
-  /* --- RESPONSIF HP (Max Width 768px) --- */
-  @media (max-width: 768px) {
-    .hamburger { display: block; z-index: 1001; }
-    
-    .bar {
-      display: block; width: 25px; height: 3px; margin: 5px auto;
-      background-color: #1a56db; transition: all 0.3s ease-in-out;
-    }
+  /* --- MENU MOBILE (YANG DIREVISI) --- */
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,0.5); /* Background gelap transparan */
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 2000;
+  }
 
-    .hamburger.active .bar:nth-child(2) { opacity: 0; }
-    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  .mobile-nav.active {
+    visibility: visible;
+    opacity: 1;
+  }
 
-    /* Menu Mobile */
-    .nav-links {
-      position: fixed;
-      left: -100%;
-      top: 0; /* Full screen menu biasanya lebih rapi dimulai dari top 0 */
-      bottom: 0;
-      flex-direction: column;
-      background-color: white;
-      width: 70%; /* Jangan full width agar user bisa klik luar untuk tutup */
-      max-width: 300px;
-      padding-top: 80px; /* Jarak dari atas */
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
+  .mobile-nav-content {
+    background: white;
+    width: 280px; /* Lebar panel menu */
+    height: 100%;
+    transform: translateX(-100%); /* Geser ke kiri (sembunyi) */
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
 
-    .nav-links.active { left: 0; }
+  .mobile-nav.active .mobile-nav-content {
+    transform: translateX(0); /* Muncul */
+  }
 
-    .nav-link {
-      padding: 1rem 2rem;
+  .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
       border-bottom: 1px solid #f3f4f6;
-      width: 100%;
-      text-align: left;
-    }
+  }
 
-    /* Penyesuaian Logo di HP agar tidak terlalu besar */
-    .site-title { font-size: 1.1rem; }
-    .site-subtitle { font-size: 0.7rem; display: none; /* Opsional: Sembunyikan subjudul di HP jika terlalu sempit */ }
-    img { width: 35px; height: auto; }
+  .menu-title {
+      font-weight: 700;
+      color: #111827;
+      font-size: 1.1rem;
+  }
+
+  .close-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      line-height: 1;
+      color: #9ca3af;
+      cursor: pointer;
+  }
+
+  /* --- TOMBOL MENU MOBILE (Revisi Height Disini) --- */
+  .mobile-links {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0;
+  }
+
+  .mobile-links a {
+    display: block;
+    
+    /* REVISI UKURAN TOMBOL: Lebih tipis */
+    padding: 0.75rem 1.5rem; 
+    
+    font-size: 0.95rem;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid #f9fafb; /* Garis tipis pemisah */
+    transition: background 0.2s;
+  }
+
+  .mobile-links a:hover {
+    background-color: #eff6ff; /* Biru muda saat disentuh */
+    color: #1a56db;
+    padding-left: 1.8rem; /* Efek geser sedikit saat hover */
   }
 </style>
-
-<script>
-  const menuBtn = document.getElementById('menu-btn');
-  const navMenu = document.getElementById('nav-menu');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  if (menuBtn && navMenu) {
-    menuBtn.addEventListener('click', () => {
-      menuBtn.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        menuBtn.classList.remove('active');
-        navMenu.classList.remove('active');
-      });
-    });
-  }
-</script>
