@@ -8,7 +8,7 @@ const rawProfile = await client.fetch(`*[_type == "profilDesa"][0]`);
 const profile = rawProfile || {};
 
 // Fallback data jika kosong
-const visi = profile.visi || "Visi belum diisi di Sanity.";
+const visi = profile.visi || "---";
 const misi = profile.misi || []; // Misi biasanya array di Sanity
 const tentang = profile.tentangDesa || "Deskripsi desa belum diisi.";
 ---

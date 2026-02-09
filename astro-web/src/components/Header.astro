@@ -60,24 +60,69 @@ const currentPath = pathname.slice(1);
 </header>
 
 <script>
-  // Script untuk Buka/Tutup Menu Mobile
-  const menuBtn = document.getElementById('mobile-menu-btn');
-  const closeBtn = document.getElementById('close-menu-btn');
-  const mobileNav = document.getElementById('mobile-nav');
-  const navLinks = mobileNav.querySelectorAll('a');
+  document.addEventListener('DOMContentLoaded', () => {
 
-  function toggleMenu() {
-    mobileNav.classList.toggle('active');
-  }
+    // --- 1. LOGIKA MENU MOBILE (JANGAN DIUBAH) ---
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+    
+    function toggleMenu() {
+      if (mobileNav) {
+        mobileNav.classList.toggle('active');
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+      }
+    }
 
-  if(menuBtn) menuBtn.addEventListener('click', toggleMenu);
-  if(closeBtn) closeBtn.addEventListener('click', toggleMenu);
-  
-  // Tutup menu otomatis saat salah satu link diklik
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        mobileNav.classList.remove('active');
+    if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+
+    // Tutup menu saat link diklik
+    if (mobileNav) {
+      const mobileLinks = mobileNav.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileNav.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+
+
+    // --- 2. LOGIKA SCROLL TO TOP (REVISI TOTAL) ---
+    
+    // Ambil semua link yang mengarah ke "/" (Logo & Teks Beranda)
+    const homeLinks = document.querySelectorAll('a[href="/"]');
+
+    homeLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        
+        // LANGKAH 1: Matikan fungsi link asli (agar tidak reload otomatis)
+        e.preventDefault();
+
+        // LANGKAH 2: Cek apakah kita sedang di halaman depan?
+        const currentPath = window.location.pathname;
+        const isHomePage = currentPath === '/' || currentPath === '/index.html';
+
+        if (isHomePage) {
+          // KONDISI A: Sedang di Home -> Scroll ke Atas
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth' // Gerakan halus
+          });
+          
+          // Opsional: Bersihkan URL (hapus #profil dsb)
+          history.replaceState(null, null, ' ');
+
+        } else {
+          // KONDISI B: Tidak di Home -> Pindah Halaman Manual
+          window.location.href = '/';
+        }
+
+      });
     });
+
   });
 </script>
 
